@@ -1,199 +1,149 @@
-Mode = "NORMAL"
-Repetition := 1
-AwaitsMotion = ""
+Mode := "NORMAL"
+Repeat := 1
+AwaitsMotion := ""
 
 #If WinActive("Guitar Pro 5")
     Escape::
         Send {Escape}
-        Mode = "NORMAL"
-        Repetition := 1
-        AwaitsMotion = ""
+        Mode := "NORMAL"
+        Repeat := 1
+        AwaitsMotion := ""
         Return
 
-    If Mode = "NORMAL"
-    {
+    #If (WinActive("Guitar Pro 5") and Mode == "NORMAL")
         ; Number keys
-        1::
-            Repetition := 1
-            Return
-        2::
-            Repetition := 2
-            Return
-        3::
-            Repetition := 3
-            Return
-        4::
-            Repetition := 4
-            Return
-        5::
-            Repetition := 5
-            Return
-        6::
-            Repetition := 6
-            Return
-        7::
-            Repetition := 7
-            Return
-        8::
-            Repetition := 8
-            Return
-        9::
-            Repetition := 9
-            Return
+        1::Repeat := 1
+        2::Repeat := 2
+        3::Repeat := 3
+        4::Repeat := 4
+        5::Repeat := 5
+        6::Repeat := 6
+        7::Repeat := 7
+        8::Repeat := 8
+        9::Repeat := 9
 
         ; Cursor keys
         h::
-            If AwaitsMotion = "d"
-            {
+            If (AwaitsMotion = "d") {
                 Send {Left}{Shift Down}
-                If Repetition = 1
-                {
+                If (Repeat = 1) {
                     Send {Down}{Delete}{Shift Up}{Up}
+                } Else {
+                    Repeat -= 1
+                    Send {Left %Repeat%}{Delete}{Shift Up}
                 }
-                Else
-                {
-                    Repetition := Repetition - 1
-                    Send {Left %Repetition%}{Delete}{Shift Up}
-                }
+            } Else {
+                Send {Left %Repeat%}
             }
-            Else
-            {
-                Send {Left %Repetition%}
-            }
-            Repetition := 1
-            AwaitsMotion = ""
+            Repeat := 1
+            AwaitsMotion := ""
             Return
         j::
-            Send {Down %Repetition%}
-            Repetition := 1
-            AwaitsMotion = ""
+            Send {Down %Repeat%}
+            Repeat := 1
+            AwaitsMotion := ""
             Return
         k::
-            Send {Up %Repetition%}
-            Repetition := 1
-            AwaitsMotion = ""
+            Send {Up %Repeat%}
+            Repeat := 1
+            AwaitsMotion := ""
             Return
         l::
-            If AwaitsMotion = "d"
-            {
+            If (AwaitsMotion = "d") {
                 Send {Shift Down}
-                If Repetition = 1
-                {
+                If (Repeat = 1) {
                     Send {Down}{Delete}{Shift Up}{Up}
+                } Else {
+                    Repeat -= 1
+                    Send {Right %Repeat%}{Delete}{Shift Up}
                 }
-                Else
-                {
-                    Repetition := Repetition - 1
-                    Send {Right %Repetition%}{Delete}{Shift Up}
-                }
+            } Else {
+                Send {Right %Repeat%}
             }
-            Else
-            {
-                Send {Right %Repetition%}
-            }
-            Repetition := 1
-            AwaitsMotion = ""
+            Repeat := 1
+            AwaitsMotion := ""
             Return
 
         ; Bar navigation
         e::
-            If AwaitsMotion = "d"
-            {
+            If (AwaitsMotion = "d") {
                 Send {Shift Down}
-                Loop %Repetition%
-                {
+                Loop %Repeat% {
                     Send {Right}{End}
                 }
                 Send {Delete}{Shift Up}
-            }
-            Else
-            {
-                Loop %Repetition%
-                {
+            } Else {
+                Loop %Repeat% {
                     Send {Right}{End}
                 }
             }
-            Repetition := 1
-            AwaitsMotion = ""
+            Repeat := 1
+            AwaitsMotion := ""
             Return
         b::
-            If AwaitsMotion = "d"
-            {
+            If (AwaitsMotion = "d") {
                 Send {Left}{Shift Down}
-                Repetition := Repetition - 1
-                Loop %Repetition%
-                {
+                Repeat -= 1
+                Loop %Repeat% {
                     Send {Home}{Left}
                 }
                 Send {Home}{Delete}{Shift Up}
-            }
-            Else
-            {
-                Loop %Repetition%
-                {
+            } Else {
+                Loop %Repeat% {
                     Send {Ctrl Down}{Left}{Ctrl Up}{Home}
                 }
             }
-            Repetition := 1
-            AwaitsMotion = ""
+            Repeat := 1
+            AwaitsMotion := ""
             Return
         w::
             ; TODO: Implement "d" motion
-            Loop %Repetition%
-            {
+            Loop %Repeat% {
                 Send {Ctrl Down}{Right}{Ctrl Up}
             }
-            Repetition := 1
-            AwaitsMotion = ""
+            Repeat := 1
+            AwaitsMotion := ""
             Return
 
         ; Deletion keys
         d::
-            If AwaitsMotion = "d"
-            {
+            If (AwaitsMotion = "d") {
                 Send {Ctrl Down}{Shift Down}
-                Loop  %Repetition%
-                {
+                Loop %Repeat% {
                     Send {Right Down}
                     Sleep 10
                     Send {Right Up}
                 }
                 Send {Shift Up}x{Ctrl Up}{Enter}
-                Repetition := 1
-                AwaitsMotion = ""
-            }
-            Else
-            {
-                AwaitsMotion = "d"
+                Repeat := 1
+                AwaitsMotion := ""
+            } Else {
+                AwaitsMotion := "d"
             }
             Return
         x::
-            If Repetition = 1
+            If (Repeat = 1) {
                 Send {Delete}
-            Else
-            {
-                Loop % Repetition - 1
-                {
+            } Else {
+                Repeat -= 1
+                Loop %Repeat% {
                     Send {Delete}{Right}
                 }
                 Send {Delete}
             }
-            Repetition := 1
+            Repeat := 1
             Return
 
-        ; Unde/Redo keys
+        ; Undo/Redo keys
         u::
-            Loop %Repetition%
-            {
+            Loop %Repeat% {
                 Send {Ctrl Down}z{Ctrl Up}
             }
-            Repetition := 1
+            Repeat := 1
             Return
         ^r::
-            Loop %Repetition%
-            {
+            Loop %Repeat% {
                 Send {Ctrl Down}Z{Ctrl Up}
             }
-            Repetition := 1
+            Repeat := 1
             Return
-    }
