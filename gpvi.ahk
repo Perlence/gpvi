@@ -10,7 +10,7 @@ AwaitsMotion := ""
         AwaitsMotion := ""
         Return
 
-    #If (WinActive("Guitar Pro 5") and Mode == "NORMAL")
+    #If WinActive("Guitar Pro 5") and Mode == "NORMAL"
         ; Number keys
         1::Repeat := 1
         2::Repeat := 2
@@ -27,7 +27,7 @@ AwaitsMotion := ""
             If (AwaitsMotion = "d") {
                 Send {Left}{Shift Down}
                 If (Repeat = 1) {
-                    Send {Down}{Delete}{Shift Up}{Up}
+                    Send {Down}{Up}{Delete}{Shift Up}
                 } Else {
                     Repeat -= 1
                     Send {Left %Repeat%}{Delete}{Shift Up}
@@ -50,12 +50,12 @@ AwaitsMotion := ""
             Return
         l::
             If (AwaitsMotion = "d") {
-                Send {Shift Down}
                 If (Repeat = 1) {
-                    Send {Down}{Delete}{Shift Up}{Up}
+                    ; Delete beat
+                    Send {Ctrl Down}{Delete}{Ctrl Up}
                 } Else {
                     Repeat -= 1
-                    Send {Right %Repeat%}{Delete}{Shift Up}
+                    Send {Shift Down}{Right %Repeat%}{Delete}{Shift Up}
                 }
             } Else {
                 Send {Right %Repeat%}
@@ -71,7 +71,7 @@ AwaitsMotion := ""
                 Loop %Repeat% {
                     Send {Right}{End}
                 }
-                Send {Delete}{Shift Up}
+                Send {Shift Up}{Delete}
             } Else {
                 Loop %Repeat% {
                     Send {Right}{End}
@@ -90,7 +90,7 @@ AwaitsMotion := ""
                 Send {Home}{Delete}{Shift Up}
             } Else {
                 Loop %Repeat% {
-                    Send {Ctrl Down}{Left}{Ctrl Up}{Home}
+                    Send {Left}{Home}
                 }
             }
             Repeat := 1
@@ -106,6 +106,18 @@ AwaitsMotion := ""
             Return
 
         ; Deletion keys
+        x::
+            Loop %Repeat% {
+                Send {Delete}{Right}
+            }
+            Repeat := 1
+            Return
+        +x::
+            Loop %Repeat% {
+                Send {Left}{Delete}
+            }
+            Repeat := 1
+            Return
         d::
             If (AwaitsMotion = "d") {
                 Send {Ctrl Down}{Shift Down}
@@ -121,17 +133,15 @@ AwaitsMotion := ""
                 AwaitsMotion := "d"
             }
             Return
-        x::
-            If (Repeat = 1) {
-                Send {Delete}
-            } Else {
-                Repeat -= 1
-                Loop %Repeat% {
-                    Send {Delete}{Right}
-                }
-                Send {Delete}
+        +d::
+            ; Does not return to the same beat if Repeat > 1
+            Send {Shift Down}
+            Loop %Repeat% {
+                Send {Right}{End}
             }
+            Send {Shift Up}{Delete}
             Repeat := 1
+            AwaitsMotion := ""
             Return
 
         ; Undo/Redo keys
@@ -146,4 +156,41 @@ AwaitsMotion := ""
                 Send {Ctrl Down}Z{Ctrl Up}
             }
             Repeat := 1
+            Return
+
+        i::
+            Mode := "INSERT"
+            Send {Insert}
+            Return
+        +i::
+            Mode := "INSERT"
+            Send {Home}{Insert}
+            Return
+        a::
+            Mode := "INSERT"
+            Send {Right}
+            Return
+        +a::
+            Mode := "INSERT"
+            Send {End}{Right}
+            Return
+        ; c::
+        ;     Return
+        ; +c::
+        ;     Return
+        s::
+            Mode := "INSERT"
+            If (Repeat = 1) {
+                Send {Ctrl Down}{Delete}{Ctrl Up}{Insert}
+            } Else {
+                ; Inconsistency on the end of the bar
+                Send {Insert}{Right}{Shift Down}
+                Repeat -= 1
+                Loop %Repeat% {
+                    Send {Right Down}
+                    Sleep 10
+                    Send {Right Up}
+                }
+                Send {Shift Up}{Delete}{Left}
+            }
             Return
