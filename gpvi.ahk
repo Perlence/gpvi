@@ -2,6 +2,156 @@ Mode := "NORMAL"
 Repeat := 1
 AwaitsMotion := ""
 
+MoveCursor(Direction, Times) {
+    Send {%Direction% %Times%}
+}
+
+GoToTheEnd(Times) {
+    Loop %Times% {
+        Send {Right}{End}
+    }
+}
+
+GoToTheBeginning(Times) {
+    Loop %Times% {
+        Send {Home}{Left}
+    }
+}
+
+GoToTheBeginningOfTheNextBar(Times) {
+    Loop %Times% {
+        Send {End}{Right}
+    }
+}
+
+SelectBeats(NumberOfBeats) {
+    Direction := (NumberOfBeats > 0) ? "{Right}" : "{Left}"
+    If (NumberOfBeats < 0) {
+        Send {Left}
+    }
+    Send {Shift Down}
+    Loop % Abs(NumberOfBeats) - 1 {
+        Send %Direction%
+    }
+    Send {Shift Up}
+}
+
+SelectBars(NumberOfBars) {
+    Direction := (NumberOfBars > 0) ? "Right" : "Left"
+    Send {Ctrl Down}{Shift Down}
+    Loop %NumberOfBars% {
+        Send {%Direction% Down}
+        Sleep 10
+        Send {%Direction% Up}
+    }
+    Send {Shift Up}{Ctrl Up}
+}
+
+SelectBeatsToTheEnd(Times) {
+    Send {Shift Down}
+    GoToTheEnd(Times)
+    Send {Shift Up}
+}
+
+SelectBeatsToTheBeginning(Times) {
+    Send {Left}{Shift Down}
+    Times -= 1
+    GoToTheBeginning(Times)
+    Send {Home}{Shift Up}
+}
+
+SelectBeatsToTheBeginningOfTheNextBar(Times) {
+    Send {Shift Down}
+    GoToTheBeginningOfTheNextBar(Times)
+    Send {Shift Up}
+}
+
+DeleteNotes(NumberOfNotes) {
+    Loop % Abs(NumberOfNotes) {
+        If (NumberOfNotes > 0) {
+            Send {Delete}{Right}
+        } Else {
+            Send {Left}{Delete}
+        }
+    }
+}
+
+DeleteBeats(Times) {
+    If (Abs(Times) = 1) {
+        If (Times < 0) {
+            Send {Left}
+        }
+        Send {Ctrl Down}{Delete}{Ctrl Up}
+    } Else {
+        SelectBeats(Times)
+        Send {Delete}
+    }
+}
+
+DeleteBars(NumberOfBars) {
+    If (NumberOfBars > 1) {
+        SelectBars(NumberOfBars)
+    }
+    Send {Ctrl Down}x{Ctrl Up}{Enter}
+}
+
+DeleteBeatsToTheEnd(Times) {
+    SelectBeatsToTheEnd(Times)
+    Send {Delete}{Right}
+}
+
+DeleteBeatsToTheBeginning(Times) {
+    SelectBeatsToTheBeginning(Times)
+    Send {Delete}
+}
+
+ClearBars(NumberOfBars) {
+    If (NumberOfBars > 1) {
+        SelectBars(NumberOfBars)
+    }
+    Send {Ctrl Down}{Shift Down}x{Ctrl Up}{Shift Up}{Enter}
+}
+
+Undo(Times) {
+    Loop %Times% {
+        Send {Ctrl Down}z{Ctrl Up}
+    }
+}
+
+Redo(Times) {
+    Loop %Times% {
+        Send {Ctrl Down}Z{Ctrl Up}
+    }
+}
+
+InsertBeat() {
+    Send {Insert}
+}
+
+InsertBeatToTheBeginning() {
+    Send {Home}{Insert}
+}
+
+AppendBeat() {
+    Send {Enter}
+}
+
+AppendBeatToTheEnd() {
+    Send {End}{Enter}
+}
+
+SubstitueBeats(NumberOfBeats) {
+    If (NumberOfBeats = 1) {
+        DeleteBeats(NumberOfBeats)
+        InsertBeat()
+    } Else {
+        ; Inconsistency on the end of the bar
+        Send {Insert}{Right}
+        DeleteBeats(NumberOfBeats)
+        Send {Left}
+    }
+}
+
 #If WinActive("Guitar Pro 5")
     Escape::
         Send {Escape}
@@ -25,40 +175,28 @@ AwaitsMotion := ""
         ; Cursor keys
         h::
             If (AwaitsMotion = "d") {
-                Send {Left}{Shift Down}
-                If (Repeat = 1) {
-                    Send {Down}{Up}{Delete}{Shift Up}
-                } Else {
-                    Repeat -= 1
-                    Send {Left %Repeat%}{Delete}{Shift Up}
-                }
+                DeleteBeats(-Repeat)
             } Else {
-                Send {Left %Repeat%}
+                MoveCursor("Left", Repeat)
             }
             Repeat := 1
             AwaitsMotion := ""
             Return
         j::
-            Send {Down %Repeat%}
+            MoveCursor("Down", Repeat)
             Repeat := 1
             AwaitsMotion := ""
             Return
         k::
-            Send {Up %Repeat%}
+            MoveCursor("Up", Repeat)
             Repeat := 1
             AwaitsMotion := ""
             Return
         l::
             If (AwaitsMotion = "d") {
-                If (Repeat = 1) {
-                    ; Delete beat
-                    Send {Ctrl Down}{Delete}{Ctrl Up}
-                } Else {
-                    Repeat -= 1
-                    Send {Shift Down}{Right %Repeat%}{Delete}{Shift Up}
-                }
+                DeleteBeats(Repeat)
             } Else {
-                Send {Right %Repeat%}
+                MoveCursor("Right", Repeat)
             }
             Repeat := 1
             AwaitsMotion := ""
@@ -67,39 +205,28 @@ AwaitsMotion := ""
         ; Bar navigation
         e::
             If (AwaitsMotion = "d") {
-                Send {Shift Down}
-                Loop %Repeat% {
-                    Send {Right}{End}
-                }
-                Send {Shift Up}{Delete}
+                DeleteBeatsToTheEnd(Repeat)
             } Else {
-                Loop %Repeat% {
-                    Send {Right}{End}
-                }
+                GoToTheEnd(Repeat)
             }
             Repeat := 1
             AwaitsMotion := ""
             Return
         b::
             If (AwaitsMotion = "d") {
-                Send {Left}{Shift Down}
-                Repeat -= 1
-                Loop %Repeat% {
-                    Send {Home}{Left}
-                }
-                Send {Home}{Delete}{Shift Up}
+                DeleteBeatsToTheBeginning(Repeat)
             } Else {
-                Loop %Repeat% {
-                    Send {Left}{Home}
-                }
+                GoToTheBeginning(Repeat)
             }
             Repeat := 1
             AwaitsMotion := ""
             Return
         w::
-            ; TODO: Implement "d" motion
-            Loop %Repeat% {
-                Send {Ctrl Down}{Right}{Ctrl Up}
+            If (AwaitsMotion = "d") {
+                ; SelectBeatsToTheBeginningOfTheNextBar(Repeat)
+                DeleteBeatsToTheEnd(Repeat)
+            } Else {
+                GoToTheBeginningOfTheNextBar(Repeat)
             }
             Repeat := 1
             AwaitsMotion := ""
@@ -107,26 +234,16 @@ AwaitsMotion := ""
 
         ; Deletion keys
         x::
-            Loop %Repeat% {
-                Send {Delete}{Right}
-            }
+            DeleteNotes(Repeat)
             Repeat := 1
             Return
         +x::
-            Loop %Repeat% {
-                Send {Left}{Delete}
-            }
+            DeleteNotes(-Repeat)
             Repeat := 1
             Return
         d::
             If (AwaitsMotion = "d") {
-                Send {Ctrl Down}{Shift Down}
-                Loop %Repeat% {
-                    Send {Right Down}
-                    Sleep 10
-                    Send {Right Up}
-                }
-                Send {Shift Up}x{Ctrl Up}{Enter}
+                DeleteBars(Repeat)
                 Repeat := 1
                 AwaitsMotion := ""
             } Else {
@@ -135,62 +252,56 @@ AwaitsMotion := ""
             Return
         +d::
             ; Does not return to the same beat if Repeat > 1
-            Send {Shift Down}
-            Loop %Repeat% {
-                Send {Right}{End}
-            }
-            Send {Shift Up}{Delete}
+            DeleteBeatsToTheEnd(Repeat)
             Repeat := 1
             AwaitsMotion := ""
             Return
 
         ; Undo/Redo keys
         u::
-            Loop %Repeat% {
-                Send {Ctrl Down}z{Ctrl Up}
-            }
+            Undo(Repeat)
             Repeat := 1
             Return
         ^r::
-            Loop %Repeat% {
-                Send {Ctrl Down}Z{Ctrl Up}
-            }
+            Redo(Repeat)
             Repeat := 1
             Return
 
         i::
+            InsertBeat()
             Mode := "INSERT"
-            Send {Insert}
             Return
         +i::
+            InsertBeatToTheBeginning()
             Mode := "INSERT"
-            Send {Home}{Insert}
             Return
         a::
+            AppendBeat()
             Mode := "INSERT"
-            Send {Right}
             Return
         +a::
+            AppendBeatToTheEnd()
             Mode := "INSERT"
-            Send {End}{Right}
             Return
         ; c::
+        ;     If (AwaitsMotion = "c") {
+        ;         DeleteBars(Repeat)
+        ;         Repeat := 1
+        ;         AwaitsMotion := ""
+        ;         Mode := "INSERT"
+        ;     } Else {
+        ;         AwaitsMotion := "c"
+        ;     }
         ;     Return
-        ; +c::
-        ;     Return
-        s::
+        +c::
+            DeleteBeatsToTheEnd(Repeat)
+            Repeat := 1
+            AwaitsMotion := ""
             Mode := "INSERT"
-            If (Repeat = 1) {
-                Send {Ctrl Down}{Delete}{Ctrl Up}{Insert}
-            } Else {
-                ; Inconsistency on the end of the bar
-                Send {Insert}{Right}{Shift Down}
-                Repeat -= 1
-                Loop %Repeat% {
-                    Send {Right Down}
-                    Sleep 10
-                    Send {Right Up}
-                }
-                Send {Shift Up}{Delete}{Left}
-            }
+            Return
+        s::
+            SubstitueBeats(Repeat)
+            Repeat := 1
+            AwaitsMotion := ""
+            Mode := "INSERT"
             Return
