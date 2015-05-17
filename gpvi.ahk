@@ -1,313 +1,320 @@
-; Global Mode, Repeat, AwaitsMotion
-SetKeyDelay 20, 20
+/* global mode, repeat, awaitsMotion */
+#noEnv
+#singleInstance, force
+sendMode, input
+setWorkingDir, %A_ScriptDir%
+setKeyDelay, 20, 20
 
-/** Reset state to default and set values from given object. */
-ResetState(State:="") {
-    State := State != "" ? State : {}
-    Global Mode, Repeat, AwaitsMotion
-    Mode := State.HasKey("Mode") ? State["Mode"] : "NORMAL"
-    Repeat := State.HasKey("Repeat") ? State["Repeat"] : 1
-    AwaitsMotion := State.HasKey("AwaitsMotion") ? State["AwaitsMotion"] : ""
+/**
+ * Reset state to default and set values from given object.
+ */
+resetState(state:="") {
+    state := state ? state : {}
+    global mode, repeat, awaitsMotion
+    mode := state.hasKey("mode") ? state["mode"] : "NORMAL"
+    repeat := state.hasKey("repeat") ? state["repeat"] : 1
+    awaitsMotion := state.hasKey("awaitsMotion") ? state["awaitsMotion"] : ""
 }
 
-/** Set state from the values of given object. */
-SetState(State:="") {
-    State := State != "" ? State : {}
-    Global Mode, Repeat, AwaitsMotion
-    If (State.HasKey("Mode"))
-        Mode := State["Mode"]
-    If (State.HasKey("Repeat"))
-        Repeat := State["Repeat"]
-    If (State.HasKey("AwaitsMotion"))
-        AwaitsMotion := State["AwaitsMotion"]
+/**
+ * Set state from the values of given object.
+ */
+setState(state:="") {
+    state := state ? state : {}
+    global mode, repeat, awaitsMotion
+    if (state.hasKey("mode"))
+        mode := state["mode"]
+    if (state.hasKey("repeat"))
+        repeat := state["repeat"]
+    if (state.hasKey("awaitsMotion"))
+        awaitsMotion := state["awaitsMotion"]
 }
 
-ResetState()
+resetState()
 
-MoveCursor(Direction, Times) {
-    Send {%Direction% %Times%}
+moveCursor(direction, times) {
+    send, {%direction% %times%}
 }
 
-GoToTheEnd(Times) {
-    Loop %Times% {
-        Send {Right}{End}
+goToEnd(times) {
+    loop, %times% {
+        send, {right}{end}
     }
 }
 
-GoToTheBeginning(Times) {
-    Loop %Times% {
-        Send {Home}{Left}
+goToBeginning(times) {
+    loop, %times% {
+        send, {left}{home}
     }
 }
 
-GoToTheBeginningOfTheNextBar(Times) {
-    Loop %Times% {
-        Send {End}{Right}
+goToBeginningOfNextBar(times) {
+    loop, %times% {
+        send, {end}{right}
     }
 }
 
-SelectBeats(NumberOfBeats) {
-    Direction := (NumberOfBeats > 0) ? "Right" : "Left"
-    If (NumberOfBeats < 0) {
-        Send {Left}
+selectBeats(numberOfBeats) {
+    direction := (numberOfBeats > 0) ? "right" : "left"
+    if (numberOfBeats < 0) {
+        send {left}
     }
-    Times := Abs(NumberOfBeats) - 1
-    Send {Shift Down}{%Direction% %Times%}{Shift Up}
+    times := abs(numberOfBeats) - 1
+    send {shift down}{%direction% %times%}{shift up}
 }
 
-SelectBars(NumberOfBars) {
-    Direction := (NumberOfBars > 0) ? "Right" : "Left"
-    Send {Ctrl Down}{Shift Down}{%Direction% %NumberOfBars%}
-    Send {Ctrl Up}{Shift Up}
+selectBars(numberOfBars) {
+    direction := (numberOfBars > 0) ? "right" : "left"
+    send, {ctrl down}{shift down}{%direction% %numberOfBars%}
+    send, {ctrl up}{shift up}
 }
 
-SelectBeatsToTheEnd(Times) {
-    Send {Shift Down}
-    GoToTheEnd(Times)
-    Send {Shift Up}
+selectBeatsToEnd(times) {
+    send, {shift down}
+    goToEnd(times)
+    send, {shift up}
 }
 
-SelectBeatsToTheBeginning(Times) {
-    Send {Left}{Shift Down}
-    Times -= 1
-    GoToTheBeginning(Times)
-    Send {Home}{Shift Up}
+selectBeatsToBeginning(times) {
+    send, {left}{shift down}
+    times -= 1
+    goToBeginning(times)
+    send, {home}{shift up}
 }
 
-SelectBeatsToTheBeginningOfTheNextBar(Times) {
-    Send {Shift Down}
-    GoToTheBeginningOfTheNextBar(Times)
-    Send {Shift Up}
+selectBeatsToBeginningOfNextBar(times) {
+    send, {shift down}
+    goToBeginningOfNextBar(times)
+    send, {shift up}
 }
 
-DeleteNotes(NumberOfNotes) {
-    Loop % Abs(NumberOfNotes) {
-        If (NumberOfNotes > 0) {
-            Send {Delete}{Right}
-        } Else {
-            Send {Left}{Delete}
+deleteNotes(numberOfNotes) {
+    loop, % abs(numberOfNotes) {
+        if (numberOfNotes > 0) {
+            send, {delete}{right}
+        } else {
+            send, {left}{delete}
         }
     }
 }
 
-DeleteBeats(Times) {
-    If (Abs(Times) = 1) {
-        If (Times < 0) {
-            Send {Left}
+deleteBeats(times) {
+    if (abs(times) = 1) {
+        if (times < 0) {
+            send, {left}
         }
-        Send {Ctrl Down}{Delete}{Ctrl Up}
-    } Else {
-        SelectBeats(Times)
-        Send {Delete}
+        send, {ctrl down}{delete}{ctrl up}
+    } else {
+        selectBeats(times)
+        send, {delete}
     }
 }
 
-DeleteBars(NumberOfBars) {
-    If (NumberOfBars > 1) {
-        SelectBars(NumberOfBars)
+deleteBars(numberOfBars) {
+    if (numberOfBars > 1) {
+        selectBars(numberOfBars)
     }
-    Send {Ctrl Down}x{Ctrl Up}{Enter}
+    send, {ctrl down}x{ctrl up}{enter}
 }
 
-DeleteBeatsToTheEnd(Times) {
-    SelectBeatsToTheEnd(Times)
-    Send {Delete}{Right}
+deleteBeatsToEnd(times) {
+    selectBeatsToEnd(times)
+    send, {delete}{right}
 }
 
-DeleteBeatsToTheBeginning(Times) {
-    SelectBeatsToTheBeginning(Times)
-    Send {Delete}
+deleteBeatsToBeginning(times) {
+    selectBeatsToBeginning(times)
+    send, {delete}
 }
 
-ClearBars(NumberOfBars) {
-    SelectBars(NumberOfBars)
-    Send {Delete}
-    If (NumberOfBars > 1) {
-        Times := NumberOfBars - 1
-        Send {Left %Times%}
-    }
-}
-
-Undo(Times) {
-    Loop %Times% {
-        Send {Ctrl Down}z{Ctrl Up}
+clearBars(numberOfBars) {
+    selectBars(numberOfBars)
+    send, {delete}
+    if (numberOfBars > 1) {
+        times := numberOfBars - 1
+        send, {left %times%}
     }
 }
 
-Redo(Times) {
-    Loop %Times% {
-        Send {Ctrl Down}Z{Ctrl Up}
+undo(times) {
+    loop, %times% {
+        send, {ctrl down}z{ctrl up}
     }
 }
 
-InsertBeat() {
-    Send {Insert}
+redo(times) {
+    loop, %times% {
+        send, {ctrl down}Z{ctrl up}
+    }
 }
 
-InsertBeatToTheBeginning() {
-    Send {Home}{Insert}
+insertBeat() {
+    send, {insert}
 }
 
-AppendBeat() {
-    Send {Enter}
+insertBeatToBeginning() {
+    send, {home}{insert}
 }
 
-AppendBeatToTheEnd() {
-    Send {End}{Enter}
+appendBeat() {
+    send, {enter}
 }
 
-SubstitueBeats(NumberOfBeats) {
-    If (NumberOfBeats = 1) {
-        DeleteBeats(NumberOfBeats)
-        InsertBeat()
-    } Else {
+appendBeatToEnd() {
+    send, {end}{enter}
+}
+
+substitueBeats(numberOfBeats) {
+    if (numberOfBeats = 1) {
+        deleteBeats(numberOfBeats)
+        insertBeat()
+    } else {
         ; Inconsistency on the end of the bar
-        Send {Insert}{Right}
-        DeleteBeats(NumberOfBeats)
-        Send {Left}
+        send, {insert}{right}
+        deleteBeats(numberOfBeats)
+        send, {left}
     }
 }
 
-#If WinActive("Guitar Pro 5")
-    Escape::
-        Send {Escape}
-        ResetState()
-        Return
+#if WinActive("Guitar Pro 5")
+    escape::
+        send, {escape}
+        resetState()
+        return
 
-    #If WinActive("Guitar Pro 5") and Mode == "NORMAL"
+    #if WinActive("Guitar Pro 5") and mode == "NORMAL"
         ; Number keys
-        1::Repeat := 1
-        2::Repeat := 2
-        3::Repeat := 3
-        4::Repeat := 4
-        5::Repeat := 5
-        6::Repeat := 6
-        7::Repeat := 7
-        8::Repeat := 8
-        9::Repeat := 9
-        ; TODO: Input repeat times greater than 10
+        1::repeat := 1
+        2::repeat := 2
+        3::repeat := 3
+        4::repeat := 4
+        5::repeat := 5
+        6::repeat := 6
+        7::repeat := 7
+        8::repeat := 8
+        9::repeat := 9
 
         ; Cursor keys
         h::
-            If (AwaitsMotion = "d") {
-                DeleteBeats(-Repeat)
-            } Else {
-                MoveCursor("Left", Repeat)
+            if (awaitsMotion = "d") {
+                deleteBeats(-repeat)
+            } else {
+                moveCursor("left", repeat)
             }
-            ResetState()
-            Return
+            resetState()
+            return
         j::
-            MoveCursor("Down", Repeat)
-            ResetState()
-            Return
+            moveCursor("down", repeat)
+            resetState()
+            return
         k::
-            MoveCursor("Up", Repeat)
-            ResetState()
-            Return
+            moveCursor("up", repeat)
+            resetState()
+            return
         l::
-            If (AwaitsMotion = "d") {
-                DeleteBeats(Repeat)
-            } Else {
-                MoveCursor("Right", Repeat)
+            if (awaitsMotion = "d") {
+                deleteBeats(repeat)
+            } else {
+                moveCursor("right", repeat)
             }
-            ResetState()
-            Return
+            resetState()
+            return
 
         ; Bar navigation
         e::
-            If (AwaitsMotion = "d") {
-                DeleteBeatsToTheEnd(Repeat)
-            } Else {
-                GoToTheEnd(Repeat)
+            if (awaitsMotion = "d") {
+                deleteBeatsToEnd(repeat)
+            } else {
+                goToEnd(repeat)
             }
-            ResetState()
-            Return
+            resetState()
+            return
         b::
-            If (AwaitsMotion = "d") {
-                DeleteBeatsToTheBeginning(Repeat)
-            } Else {
-                GoToTheBeginning(Repeat)
+            if (awaitsMotion = "d") {
+                deleteBeatsToBeginning(repeat)
+            } else {
+                goToBeginning(repeat)
             }
-            ResetState()
-            Return
+            resetState()
+            return
         w::
-            If (AwaitsMotion = "d") {
-                ; SelectBeatsToTheBeginningOfTheNextBar(Repeat)
-                DeleteBeatsToTheEnd(Repeat)
-            } Else {
-                GoToTheBeginningOfTheNextBar(Repeat)
+            if (awaitsMotion = "d") {
+                ; selectBeatsToBeginningOfNextBar(repeat)
+                deleteBeatsToEnd(repeat)
+            } else {
+                goToBeginningOfNextBar(repeat)
             }
-            ResetState()
-            Return
+            resetState()
+            return
 
         ; Deletion keys
         x::
-            DeleteNotes(Repeat)
-            ResetState()
-            Return
+            deleteNotes(repeat)
+            resetState()
+            return
         +x::
-            DeleteNotes(-Repeat)
-            ResetState()
-            Return
+            deleteNotes(-repeat)
+            resetState()
+            return
         d::
-            If (AwaitsMotion = "d") {
-                DeleteBars(Repeat)
-                ResetState()
-            } Else {
-                SetState({AwaitsMotion: "d"})
+            if (awaitsMotion = "d") {
+                deleteBars(repeat)
+                resetState()
+            } else {
+                setState({awaitsMotion: "d"})
             }
-            Return
+            return
         +d::
-            ; Does not return to the same beat if Repeat > 1
-            DeleteBeatsToTheEnd(Repeat)
-            ResetState()
-            Return
+            ; Does not return to the same beat if repeat > 1
+            deleteBeatsToEnd(repeat)
+            resetState()
+            return
 
-        ; Undo/Redo keys
+        ; undo/redo keys
         u::
-            Undo(Repeat)
-            ResetState()
-            Return
+            undo(repeat)
+            resetState()
+            return
         ^r::
-            Redo(Repeat)
-            ResetState()
-            Return
+            redo(repeat)
+            resetState()
+            return
 
         i::
-            InsertBeat()
-            ResetState({Mode: "INSERT"})
-            Return
+            insertBeat()
+            resetState({mode: "INSERT"})
+            return
         +i::
-            InsertBeatToTheBeginning()
-            ResetState({Mode: "INSERT"})
-            Return
+            insertBeatToBeginning()
+            resetState({mode: "INSERT"})
+            return
         a::
-            AppendBeat()
-            ResetState({Mode: "INSERT"})
-            Return
+            appendBeat()
+            resetState({mode: "INSERT"})
+            return
         +a::
-            AppendBeatToTheEnd()
-            ResetState({Mode: "INSERT"})
-            Return
+            appendBeatToEnd()
+            resetState({mode: "INSERT"})
+            return
         ; c::
-        ;     If (AwaitsMotion = "c") {
-        ;         DeleteBars(Repeat)
-        ;         Repeat := 1
-        ;         AwaitsMotion := ""
-        ;         Mode := "INSERT"
-        ;     } Else {
-        ;         AwaitsMotion := "c"
+        ;     if (awaitsMotion = "c") {
+        ;         deleteBars(repeat)
+        ;         repeat := 1
+        ;         awaitsMotion := ""
+        ;         mode := "INSERT"
+        ;     } else {
+        ;         awaitsMotion := "c"
         ;     }
-        ;     Return
+        ;     return
         +c::
-            DeleteBeatsToTheEnd(Repeat)
-            ResetState({Mode: "INSERT"})
-            Return
+            deleteBeatsToEnd(repeat)
+            resetState({mode: "INSERT"})
+            return
         s::
-            SubstitueBeats(Repeat)
-            ResetState({Mode: "INSERT"})
-            Return
+            substitueBeats(repeat)
+            resetState({mode: "INSERT"})
+            return
         +s::
-            ClearBars(Repeat)
-            ResetState({Mode: "INSERT"})
-            Return
+            clearBars(repeat)
+            resetState({mode: "INSERT"})
+            return
