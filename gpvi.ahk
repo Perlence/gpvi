@@ -1,8 +1,28 @@
+; Global Mode, Repeat, AwaitsMotion
 SetKeyDelay 20, 20
 
-Mode := "NORMAL"
-Repeat := 1
-AwaitsMotion := ""
+/** Reset state to default and set values from given object. */
+ResetState(State:="") {
+    State := State != "" ? State : {}
+    Global Mode, Repeat, AwaitsMotion
+    Mode := State.HasKey("Mode") ? State["Mode"] : "NORMAL"
+    Repeat := State.HasKey("Repeat") ? State["Repeat"] : 1
+    AwaitsMotion := State.HasKey("AwaitsMotion") ? State["AwaitsMotion"] : ""
+}
+
+/** Set state from the values of given object. */
+SetState(State:="") {
+    State := State != "" ? State : {}
+    Global Mode, Repeat, AwaitsMotion
+    If (State.HasKey("Mode"))
+        Mode := State["Mode"]
+    If (State.HasKey("Repeat"))
+        Repeat := State["Repeat"]
+    If (State.HasKey("AwaitsMotion"))
+        AwaitsMotion := State["AwaitsMotion"]
+}
+
+ResetState()
 
 MoveCursor(Direction, Times) {
     Send {%Direction% %Times%}
@@ -151,9 +171,7 @@ SubstitueBeats(NumberOfBeats) {
 #If WinActive("Guitar Pro 5")
     Escape::
         Send {Escape}
-        Mode := "NORMAL"
-        Repeat := 1
-        AwaitsMotion := ""
+        ResetState()
         Return
 
     #If WinActive("Guitar Pro 5") and Mode == "NORMAL"
@@ -176,18 +194,15 @@ SubstitueBeats(NumberOfBeats) {
             } Else {
                 MoveCursor("Left", Repeat)
             }
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
         j::
             MoveCursor("Down", Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
         k::
             MoveCursor("Up", Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
         l::
             If (AwaitsMotion = "d") {
@@ -195,8 +210,7 @@ SubstitueBeats(NumberOfBeats) {
             } Else {
                 MoveCursor("Right", Repeat)
             }
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
 
         ; Bar navigation
@@ -206,8 +220,7 @@ SubstitueBeats(NumberOfBeats) {
             } Else {
                 GoToTheEnd(Repeat)
             }
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
         b::
             If (AwaitsMotion = "d") {
@@ -215,8 +228,7 @@ SubstitueBeats(NumberOfBeats) {
             } Else {
                 GoToTheBeginning(Repeat)
             }
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
         w::
             If (AwaitsMotion = "d") {
@@ -225,60 +237,57 @@ SubstitueBeats(NumberOfBeats) {
             } Else {
                 GoToTheBeginningOfTheNextBar(Repeat)
             }
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
 
         ; Deletion keys
         x::
             DeleteNotes(Repeat)
-            Repeat := 1
+            ResetState()
             Return
         +x::
             DeleteNotes(-Repeat)
-            Repeat := 1
+            ResetState()
             Return
         d::
             If (AwaitsMotion = "d") {
                 DeleteBars(Repeat)
-                Repeat := 1
-                AwaitsMotion := ""
+                ResetState()
             } Else {
-                AwaitsMotion := "d"
+                SetState({AwaitsMotion: "d"})
             }
             Return
         +d::
             ; Does not return to the same beat if Repeat > 1
             DeleteBeatsToTheEnd(Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
+            ResetState()
             Return
 
         ; Undo/Redo keys
         u::
             Undo(Repeat)
-            Repeat := 1
+            ResetState()
             Return
         ^r::
             Redo(Repeat)
-            Repeat := 1
+            ResetState()
             Return
 
         i::
             InsertBeat()
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         +i::
             InsertBeatToTheBeginning()
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         a::
             AppendBeat()
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         +a::
             AppendBeatToTheEnd()
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         ; c::
         ;     If (AwaitsMotion = "c") {
@@ -292,19 +301,13 @@ SubstitueBeats(NumberOfBeats) {
         ;     Return
         +c::
             DeleteBeatsToTheEnd(Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         s::
             SubstitueBeats(Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
         +s::
             ClearBars(Repeat)
-            Repeat := 1
-            AwaitsMotion := ""
-            Mode := "INSERT"
+            ResetState({Mode: "INSERT"})
             Return
