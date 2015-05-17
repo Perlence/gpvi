@@ -1,3 +1,5 @@
+SetKeyDelay 20, 20
+
 Mode := "NORMAL"
 Repeat := 1
 AwaitsMotion := ""
@@ -25,26 +27,18 @@ GoToTheBeginningOfTheNextBar(Times) {
 }
 
 SelectBeats(NumberOfBeats) {
-    Direction := (NumberOfBeats > 0) ? "{Right}" : "{Left}"
+    Direction := (NumberOfBeats > 0) ? "Right" : "Left"
     If (NumberOfBeats < 0) {
         Send {Left}
     }
-    Send {Shift Down}
-    Loop % Abs(NumberOfBeats) - 1 {
-        Send %Direction%
-    }
-    Send {Shift Up}
+    Times := Abs(NumberOfBeats) - 1
+    Send {Shift Down}{%Direction% %Times%}{Shift Up}
 }
 
 SelectBars(NumberOfBars) {
     Direction := (NumberOfBars > 0) ? "Right" : "Left"
-    Send {Ctrl Down}{Shift Down}
-    Loop %NumberOfBars% {
-        Send {%Direction% Down}
-        Sleep 10
-        Send {%Direction% Up}
-    }
-    Send {Shift Up}{Ctrl Up}
+    Send {Ctrl Down}{Shift Down}{%Direction% %NumberOfBars%}
+    Send {Ctrl Up}{Shift Up}
 }
 
 SelectBeatsToTheEnd(Times) {
@@ -106,10 +100,12 @@ DeleteBeatsToTheBeginning(Times) {
 }
 
 ClearBars(NumberOfBars) {
+    SelectBars(NumberOfBars)
+    Send {Delete}
     If (NumberOfBars > 1) {
-        SelectBars(NumberOfBars)
+        Times := NumberOfBars - 1
+        Send {Left %Times%}
     }
-    Send {Ctrl Down}{Shift Down}x{Ctrl Up}{Shift Up}{Enter}
 }
 
 Undo(Times) {
@@ -171,6 +167,7 @@ SubstitueBeats(NumberOfBeats) {
         7::Repeat := 7
         8::Repeat := 8
         9::Repeat := 9
+        ; TODO: Input repeat times greater than 10
 
         ; Cursor keys
         h::
@@ -301,6 +298,12 @@ SubstitueBeats(NumberOfBeats) {
             Return
         s::
             SubstitueBeats(Repeat)
+            Repeat := 1
+            AwaitsMotion := ""
+            Mode := "INSERT"
+            Return
+        +s::
+            ClearBars(Repeat)
             Repeat := 1
             AwaitsMotion := ""
             Mode := "INSERT"
