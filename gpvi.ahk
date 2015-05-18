@@ -6,6 +6,8 @@ setWorkingDir, %A_ScriptDir%
 
 ; Wait for dialog to show up.
 DIALOG_DELAY := 50
+; Wait for bar to select.
+BAR_SELECTION_DELAY := 10
 
 /**
  * Reset state to default and set values from given object.
@@ -33,6 +35,9 @@ setState(state:="") {
         awaitsMotion := state["awaitsMotion"]
 }
 
+/**
+ * Switch mode based on current state.
+ */
 transitState() {
     global awaitsMotion, mode
     state := {}
@@ -40,6 +45,8 @@ transitState() {
         state["mode"] := "INSERT"
     else if (mode = "VISUAL")
         state["mode"] := "VISUAL"
+    else if (mode = "V-LINE")
+        state["mode"] := "V-LINE"
     resetState(state)
 }
 
@@ -47,14 +54,20 @@ moveCursor(direction, times) {
     global mode
     if (mode = "VISUAL")
         send, {shift down}
+    else if (mode = "V-LINE")
+        send, {ctrl down}{shift down}
     send, {%direction% %times%}
     if (mode = "VISUAL")
         send, {shift up}
+    else if (mode = "V-LINE")
+        send, {ctrl up}{shift up}
 }
 
 goToEnd(times) {
     global mode
     if (mode = "VISUAL")
+        send, {shift down}
+    else if (mode = "V-LINE")
         send, {shift down}
     loop, %times%
     {
@@ -62,11 +75,15 @@ goToEnd(times) {
     }
     if (mode = "VISUAL")
         send, {shift up}
+    else if (mode = "V-LINE")
+        send, {shift up}
 }
 
 goToBeginning(times) {
     global mode
     if (mode = "VISUAL")
+        send, {shift down}
+    else if (mode = "V-LINE")
         send, {shift down}
     loop, %times%
     {
@@ -74,17 +91,23 @@ goToBeginning(times) {
     }
     if (mode = "VISUAL")
         send, {shift up}
+    else if (mode = "V-LINE")
+        send, {shift up}
 }
 
 goToBeginningOfNextBar(times) {
     global mode
     if (mode = "VISUAL")
         send, {shift down}
+    else if (mode = "V-LINE")
+        send, {shift down}
     loop, %times%
     {
         send, {end}{right}
     }
     if (mode = "VISUAL")
+        send, {shift up}
+    else if (mode = "V-LINE")
         send, {shift up}
 }
 
@@ -99,12 +122,14 @@ selectBeats(numberOfBeats) {
 
 selectBars(numberOfBars) {
     direction := (numberOfBars > 0) ? "right" : "left"
-    send, {home}{shift down}{end}
-    loop, % abs(numberOfBars) - 1
+    times := abs(numberOfBars)
+    send, {ctrl down}{shift down}
+    loop, %times%
     {
-        send, {%direction%}{end}
+        send, {%direction%}
+        sleep, BAR_SELECTION_DELAY
     }
-    send, {shift up}
+    send, {ctrl up}{shift up}
 }
 
 selectBeatsToEnd(times) {
@@ -139,25 +164,27 @@ deleteNotes(numberOfNotes) {
     }
 }
 
-deleteBeats(times) {
+deleteBeats(times, cut:=false) {
+    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     if (abs(times) = 1)
     {
         if (times < 0)
         {
             send, {left}
         }
-        send, {ctrl down}{delete}{ctrl up}
+        send, {shift down}{up}{down}{shift up}%delete%
     }
     else
     {
         selectBeats(times)
-        send, {delete}
+        send, %delete%
     }
 }
 
-deleteBeatsToEnd(times) {
+deleteBeatsToEnd(times, cut:=false) {
+    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToEnd(times)
-    send, {delete}
+    send, %delete%
     if (times > 1)
     {
         times -= 1
@@ -165,9 +192,10 @@ deleteBeatsToEnd(times) {
     }
 }
 
-deleteBeatsToBeginning(times) {
+deleteBeatsToBeginning(times, cut:=false) {
+    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToBeginning(times)
-    send, {delete}
+    send, %delete%
     if (times > 1)
     {
         times -= 1
@@ -201,11 +229,10 @@ changeBars(numberOfBars) {
     clearBars(1)
 }
 
-substituteBeats(numberOfBeats) {
+changeBeats(numberOfBeats) {
     if (numberOfBeats = 1)
     {
-        deleteBeats(numberOfBeats)
-        insertBeat()
+        replaceWithRest()
     }
     else
     {
@@ -230,6 +257,16 @@ redo(times) {
     }
 }
 
+paste() {
+    send, {ctrl down}v{ctrl up}
+    sleep, DIALOG_DELAY
+    send, {enter}
+}
+
+replaceWithRest() {
+    send, r
+}
+
 insertBeat() {
     send, {insert}
 }
@@ -239,11 +276,25 @@ insertBeatToBeginning() {
 }
 
 appendBeat() {
+    ; Could be better.
     send, {enter}
 }
 
 appendBeatToEnd() {
     send, {end}{enter}
+}
+
+insertBar() {
+    send, {ctrl down}{insert}{ctrl up}
+}
+
+appendBar() {
+    ; Uses clipboard -- not optimal.
+    insertBar()
+    send, {right}
+    deleteBeatsToEnd(1, true)
+    send, {left}
+    paste()
 }
 
 #if WinActive("Guitar Pro 5")
@@ -266,9 +317,13 @@ appendBeatToEnd() {
 
         ; Cursor keys
         h::
-            if awaitsMotion in d,c
+            if (awaitsMotion = "d")
             {
                 deleteBeats(-repeat)
+            }
+            else if (awaitsMotion = "c")
+            {
+                changeBeats(-repeat)
             }
             else
             {
@@ -285,9 +340,13 @@ appendBeatToEnd() {
             transitState()
             return
         l::
-            if awaitsMotion in d,c
+            if (awaitsMotion = "d")
             {
                 deleteBeats(repeat)
+            }
+            else if (awaitsMotion = "c")
+            {
+                changeBeats(repeat)
             }
             else
             {
@@ -367,6 +426,11 @@ appendBeatToEnd() {
                 deleteBeats(1)
                 resetState()
             }
+            else if (mode = "V-LINE")
+            {
+                deleteBars(1)
+                resetState()
+            }
             else
             {
                 setState({awaitsMotion: "d"})
@@ -411,6 +475,16 @@ appendBeatToEnd() {
             appendBeatToEnd()
             resetState({mode: "INSERT"})
             return
+        o::
+            appendBar()
+            resetState({mode: "INSERT"})
+            return
+        +o::
+            keyWait, shift
+            insertBar()
+            resetState({mode: "INSERT"})
+            return
+
         c::
             if (awaitsMotion = "c")
             {
@@ -420,6 +494,12 @@ appendBeatToEnd() {
             else if (mode = "VISUAL")
             {
                 deleteBeats(1)
+                resetState({mode: "INSERT"})
+            }
+            else if (mode = "V-LINE")
+            {
+                deleteBars(1)
+                insertBar()
                 resetState({mode: "INSERT"})
             }
             else
@@ -432,6 +512,7 @@ appendBeatToEnd() {
             if (mode = "VISUAL")
             {
                 deleteBars(1)
+                insertBar()
                 resetState({mode: "INSERT"})
             }
             else
@@ -441,7 +522,21 @@ appendBeatToEnd() {
             }
             return
         s::
-            substituteBeats(repeat)
+            if (mode = "VISUAL")
+            {
+                deleteBeats(1)
+                resetState({mode: "INSERT"})
+            }
+            else if (mode = "V-LINE")
+            {
+                deleteBars(1)
+                insertBar()
+                resetState({mode: "INSERT"})
+            }
+            else
+            {
+                changeBeats(repeat)
+            }
             resetState({mode: "INSERT"})
             return
         +s::
@@ -454,8 +549,8 @@ appendBeatToEnd() {
             selectBeats(repeat)
             resetState({mode: "VISUAL"})
             return
-        ; +v::
-        ;     keyWait, shift
-        ;     selectBars(repeat)
-        ;     resetState({mode: "V-LINE"})
-        ;     return
+        +v::
+            keyWait, shift
+            selectBars(repeat)
+            resetState({mode: "V-LINE"})
+            return
