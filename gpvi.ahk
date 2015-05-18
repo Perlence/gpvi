@@ -1,4 +1,3 @@
-global mode, repeat, awaitsMotion
 #noEnv
 #singleInstance, force
 sendMode, input
@@ -8,6 +7,8 @@ setWorkingDir, %A_ScriptDir%
 DIALOG_DELAY := 50
 ; Wait for bar to select.
 BAR_SELECTION_DELAY := 10
+
+global mode, repeat, awaitsMotion
 
 /**
  * Reset state to default and set values from given object.
