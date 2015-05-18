@@ -1,4 +1,4 @@
-/* global mode, repeat, awaitsMotion */
+global mode, repeat, awaitsMotion
 #noEnv
 #singleInstance, force
 sendMode, input
@@ -109,6 +109,20 @@ goToBeginningOfNextBar(times) {
         send, {shift up}
     else if (mode = "V-LINE")
         send, {shift up}
+}
+
+goToBeginningOfScore() {
+    send, {ctrl down}{home}{ctrl up}
+}
+
+goToEndOfScore() {
+    send, {ctrl down}{end}{ctrl up}
+    goToBeginning(1)
+}
+
+goToBar(number) {
+    goToBeginningOfScore()
+    goToBeginningOfNextBar(number - 1)
 }
 
 selectBeats(numberOfBeats) {
@@ -391,7 +405,30 @@ appendBar() {
             transitState()
             return
 
-        ; Deletion keys
+        ; Score navigation
+        g::
+            if (awaitsMotion = "g")
+            {
+                goToBeginningOfScore()
+                resetState()
+            }
+            else
+            {
+                setState({awaitsMotion: "g"})
+            }
+            return
+        +g::
+            if (repeat = 1)
+            {
+                goToEndOfScore()
+            }
+            else
+            {
+                goToBar(repeat)
+            }
+            return
+
+        ; Deletion
         x::
             if (mode = "VISUAL")
             {
@@ -443,7 +480,7 @@ appendBar() {
             resetState()
             return
 
-        ; undo/redo keys
+        ; Undo/redo keys
         u::
             undo(repeat)
             resetState()
@@ -454,6 +491,7 @@ appendBar() {
             resetState()
             return
 
+        ; Replace, insert, and append
         r::
             resetState({mode: "INSERT"})
             return
@@ -485,6 +523,7 @@ appendBar() {
             resetState({mode: "INSERT"})
             return
 
+        ; Substitution and change
         c::
             if (awaitsMotion = "c")
             {
@@ -504,7 +543,7 @@ appendBar() {
             }
             else
             {
-                awaitsMotion := "c"
+                setState({awaitsMotion: "c"})
             }
             return
         +c::
@@ -545,6 +584,7 @@ appendBar() {
             resetState({mode: "INSERT"})
             return
 
+        ; Visual mode
         v::
             selectBeats(repeat)
             resetState({mode: "VISUAL"})
