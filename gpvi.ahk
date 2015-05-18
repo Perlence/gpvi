@@ -112,6 +112,22 @@ goToBeginningOfNextBar(times) {
         send, {shift up}
 }
 
+goToBeatOfBar(number) {
+    goToBeginning(1)
+    if (number > 1)
+    {
+        moveCursor("right", (number - 1))
+    }
+}
+
+goToAbsoluteBeat(number) {
+    goToBeginningOfScore()
+    if (number > 1)
+    {
+        moveCursor("right", (number - 1))
+    }
+}
+
 goToBeginningOfScore() {
     send, {ctrl down}{home}{ctrl up}
 }
@@ -124,6 +140,23 @@ goToEndOfScore() {
 goToBar(number) {
     goToBeginningOfScore()
     goToBeginningOfNextBar(number - 1)
+}
+
+goToNextMarker(number) {
+    send, {ctrl down}{tab %number%}{ctrl up}
+}
+
+goToPreviousMarker(number) {
+    send, {shift down}{tab %number%}{shift up}
+}
+
+insertMarker() {
+    send, {shift down}{insert}{shift up}
+}
+
+listMarkers() {
+    ; send, {alt}ml
+    send, {alt}{right 6}{down 2}{enter}
 }
 
 selectBeats(numberOfBeats) {
@@ -312,8 +345,31 @@ appendBar() {
     paste()
 }
 
+transposeUp(times) {
+    loop, %times%
+    {
+        ; send, {alt}nuu{enter}
+        send, {alt}{right 4}{down 19}{enter}
+    }
+}
+
+transposeDown(times) {
+    loop, %times%
+    {
+        send, {alt}{right 4}{down 20}{enter}
+    }
+}
+
+deselect() {
+    send, {escape}
+}
+
 #if WinActive("Guitar Pro 5")
     escape::
+        send, {escape}
+        resetState()
+        return
+    ^c::
         send, {escape}
         resetState()
         return
@@ -405,12 +461,23 @@ appendBar() {
             }
             transitState()
             return
+        |::
+            goToBeatOfBar(repeat)
+            resetState()
+            return
 
         ; Score navigation
         g::
             if (awaitsMotion = "g")
             {
-                goToBeginningOfScore()
+                if (repeat = 1)
+                {
+                    goToBeginningOfScore()
+                }
+                else
+                {
+                    goToBar(repeat)
+                }
                 resetState()
             }
             else
@@ -427,6 +494,47 @@ appendBar() {
             {
                 goToBar(repeat)
             }
+            return
+        [::
+            if (awaitsMotion = "]")
+            {
+                goToNextMarker(repeat)
+                resetState()
+            }
+            else if (awaitsMotion = "[")
+            {
+                goToPreviousMarker(repeat)
+                resetState()
+            }
+            else
+            {
+                setState({awaitsMotion: "["})
+            }
+            return
+        ]::
+            if (awaitsMotion = "]")
+            {
+                goToNextMarker(repeat)
+                resetState()
+            }
+            else if (awaitsMotion = "[")
+            {
+                goToPreviousMarker(repeat)
+                resetState()
+            }
+            else
+            {
+                setState({awaitsMotion: "]"})
+            }
+            return
+        m::
+            insertMarker()
+            resetState()
+            return
+        +m::
+            keyWait, shift
+            listMarkers()
+            resetState()
             return
 
         ; Deletion
@@ -515,13 +623,31 @@ appendBar() {
             resetState({mode: "INSERT"})
             return
         o::
-            appendBar()
-            resetState({mode: "INSERT"})
+            if (awaitsMotion = "g")
+            {
+                goToAbsoluteBeat(repeat)
+                resetState()
+            }
+            else
+            {
+                appendBar()
+                resetState({mode: "INSERT"})
+            }
             return
         +o::
             keyWait, shift
             insertBar()
             resetState({mode: "INSERT"})
+            return
+        ^a::
+            keyWait, ctrl
+            transposeUp(repeat)
+            resetState()
+            return
+        ^x::
+            keyWait, ctrl
+            transposeDown(repeat)
+            resetState()
             return
 
         ; Substitution and change
@@ -587,11 +713,35 @@ appendBar() {
 
         ; Visual mode
         v::
-            selectBeats(repeat)
-            resetState({mode: "VISUAL"})
+            if (mode = "VISUAL")
+            {
+                deselect()
+                resetState()
+            }
+            else if (mode = "V-LINE")
+            {
+                resetState({mode: "VISUAL"})
+            }
+            else
+            {
+                selectBeats(repeat)
+                resetState({mode: "VISUAL"})
+            }
             return
         +v::
             keyWait, shift
-            selectBars(repeat)
-            resetState({mode: "V-LINE"})
+            if (mode = "V-LINE")
+            {
+                deselect()
+                resetState()
+            }
+            else if (mode = "VISUAL")
+            {
+                resetState({mode: "V-LINE"})
+            }
+            else
+            {
+                selectBars(repeat)
+                resetState({mode: "V-LINE"})
+            }
             return
