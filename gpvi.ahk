@@ -8,7 +8,7 @@ DIALOG_DELAY := 50
 ; Wait for bar to select.
 BAR_SELECTION_DELAY := 10
 
-global mode, repeat, awaitsMotion
+global mode, repeat, repeatSet, awaitsMotion
 
 /**
  * Reset state to default and set values from given object.
@@ -18,6 +18,7 @@ resetState(state:="") {
     global mode, repeat, awaitsMotion
     mode := state.hasKey("mode") ? state["mode"] : "NORMAL"
     repeat := state.hasKey("repeat") ? state["repeat"] : 1
+    repeatSet := state.hasKey("repeat") ? state["repeat"] : false
     awaitsMotion := state.hasKey("awaitsMotion") ? state["awaitsMotion"] : ""
 }
 resetState()
@@ -32,8 +33,21 @@ setState(state:="") {
         mode := state["mode"]
     if (state.hasKey("repeat"))
         repeat := state["repeat"]
+    if (state.hasKey("repeatSet"))
+        repeatSet := state["repeatSet"]
     if (state.hasKey("awaitsMotion"))
         awaitsMotion := state["awaitsMotion"]
+}
+
+/**
+ * Append given digit to repeat number.
+ */
+appendNumber(number) {
+    global repeat, repeatSet
+    if (repeatSet)
+        setState({repeatSet: true, repeat: repeat * 10 + number})
+    else if (number > 0)
+        setState({repeatSet: true, repeat: number})
 }
 
 /**
@@ -376,15 +390,16 @@ deselect() {
 
     #if WinActive("Guitar Pro 5") and mode != "INSERT"
         ; Number keys
-        1::setState({repeat: 1})
-        2::setState({repeat: 2})
-        3::setState({repeat: 3})
-        4::setState({repeat: 4})
-        5::setState({repeat: 5})
-        6::setState({repeat: 6})
-        7::setState({repeat: 7})
-        8::setState({repeat: 8})
-        9::setState({repeat: 9})
+        0::appendNumber(0)
+        1::appendNumber(1)
+        2::appendNumber(2)
+        3::appendNumber(3)
+        4::appendNumber(4)
+        5::appendNumber(5)
+        6::appendNumber(6)
+        7::appendNumber(7)
+        8::appendNumber(8)
+        9::appendNumber(9)
 
         ; Cursor keys
         h::
@@ -486,7 +501,7 @@ deselect() {
             }
             return
         +g::
-            if (repeat = 1)
+            if (not repeatSet)
             {
                 goToEndOfScore()
             }
@@ -494,6 +509,7 @@ deselect() {
             {
                 goToBar(repeat)
             }
+            resetState()
             return
         [::
             if (awaitsMotion = "]")
