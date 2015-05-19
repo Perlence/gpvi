@@ -1,7 +1,8 @@
 /**
  * Reset state to default and set values from given object.
  */
-resetState(state:="") {
+resetState(state:="")
+{
     state := state ? state : {}
     global mode, repeat, awaitsMotion
     mode := state.hasKey("mode") ? state["mode"] : "NORMAL"
@@ -13,7 +14,8 @@ resetState(state:="") {
 /**
  * Set state from the values of given object.
  */
-setState(state:="") {
+setState(state:="")
+{
     state := state ? state : {}
     global mode, repeat, awaitsMotion
     if (state.hasKey("mode"))
@@ -29,7 +31,8 @@ setState(state:="") {
 /**
  * Append given digit to repeat number.
  */
-appendNumber(number) {
+appendNumber(number)
+{
     global repeat, repeatSet
     if (repeatSet)
         setState({repeatSet: true, repeat: repeat * 10 + number})
@@ -40,7 +43,8 @@ appendNumber(number) {
 /**
  * Switch mode based on current state.
  */
-transitState() {
+transitState()
+{
     global awaitsMotion, mode
     state := {}
     if (awaitsMotion = "c")
@@ -52,7 +56,8 @@ transitState() {
     resetState(state)
 }
 
-moveCursor(direction, times) {
+moveCursor(direction, times)
+{
     global mode
     if (mode = "VISUAL")
         send, {shift down}
@@ -65,7 +70,8 @@ moveCursor(direction, times) {
         send, {ctrl up}{shift up}
 }
 
-goToEnd(times) {
+goToEnd(times)
+{
     global mode
     if (mode = "VISUAL")
         send, {shift down}
@@ -81,7 +87,8 @@ goToEnd(times) {
         send, {shift up}
 }
 
-goToBeginning(times) {
+goToBeginning(times)
+{
     global mode
     if (mode = "VISUAL")
         send, {shift down}
@@ -97,7 +104,8 @@ goToBeginning(times) {
         send, {shift up}
 }
 
-goToBeginningOfNextBar(times) {
+goToBeginningOfNextBar(times)
+{
     global mode
     if (mode = "VISUAL")
         send, {shift down}
@@ -113,7 +121,8 @@ goToBeginningOfNextBar(times) {
         send, {shift up}
 }
 
-goToBeatOfBar(number) {
+goToBeatOfBar(number)
+{
     goToBeginning(1)
     if (number > 1)
     {
@@ -121,7 +130,8 @@ goToBeatOfBar(number) {
     }
 }
 
-goToAbsoluteBeat(number) {
+goToAbsoluteBeat(number)
+{
     goToBeginningOfScore()
     if (number > 1)
     {
@@ -129,38 +139,46 @@ goToAbsoluteBeat(number) {
     }
 }
 
-goToBeginningOfScore() {
+goToBeginningOfScore()
+{
     send, {ctrl down}{home}{ctrl up}
 }
 
-goToEndOfScore() {
+goToEndOfScore()
+{
     send, {ctrl down}{end}{ctrl up}
     goToBeginning(1)
 }
 
-goToBar(number) {
+goToBar(number)
+{
     goToBeginningOfScore()
     goToBeginningOfNextBar(number - 1)
 }
 
-goToNextMarker(number) {
+goToNextMarker(number)
+{
     send, {ctrl down}{tab %number%}{ctrl up}
 }
 
-goToPreviousMarker(number) {
+goToPreviousMarker(number)
+{
     send, {shift down}{tab %number%}{shift up}
 }
 
-insertMarker() {
+insertMarker()
+{
     send, {shift down}{insert}{shift up}
 }
 
-listMarkers() {
+listMarkers()
+{
     ; send, {alt}ml
     send, {alt}{right 6}{down 2}{enter}
 }
 
-selectBeats(numberOfBeats) {
+selectBeats(numberOfBeats)
+{
     direction := (numberOfBeats > 0) ? "right" : "left"
     if (numberOfBeats < 0) {
         send {left}
@@ -169,7 +187,8 @@ selectBeats(numberOfBeats) {
     send {shift down}{up}{down}{%direction% %times%}{shift up}
 }
 
-selectBars(numberOfBars) {
+selectBars(numberOfBars)
+{
     direction := (numberOfBars > 0) ? "right" : "left"
     times := abs(numberOfBars)
     send, {ctrl down}{shift down}
@@ -181,25 +200,29 @@ selectBars(numberOfBars) {
     send, {ctrl up}{shift up}
 }
 
-selectBeatsToEnd(times) {
+selectBeatsToEnd(times)
+{
     send, {shift down}{up}{down}
     goToEnd(times)
     send, {shift up}
 }
 
-selectBeatsToBeginning(times) {
+selectBeatsToBeginning(times)
+{
     send, {left}{shift down}{up}{down}
     goToBeginning(times)
     send, {home}{shift up}
 }
 
-selectBeatsToBeginningOfNextBar(times) {
+selectBeatsToBeginningOfNextBar(times)
+{
     send, {shift down}{up}{down}
     goToBeginningOfNextBar(times)
     send, {shift up}
 }
 
-deleteNotes(numberOfNotes) {
+deleteNotes(numberOfNotes)
+{
     loop, % abs(numberOfNotes)
     {
         if (numberOfNotes > 0)
@@ -213,7 +236,8 @@ deleteNotes(numberOfNotes) {
     }
 }
 
-deleteBeats(times, cut:=false) {
+deleteBeats(times, cut:=false)
+{
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     if (abs(times) = 1)
     {
@@ -230,7 +254,8 @@ deleteBeats(times, cut:=false) {
     }
 }
 
-deleteBeatsToEnd(times, cut:=false) {
+deleteBeatsToEnd(times, cut:=false)
+{
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToEnd(times)
     send, %delete%
@@ -241,7 +266,8 @@ deleteBeatsToEnd(times, cut:=false) {
     }
 }
 
-deleteBeatsToBeginning(times, cut:=false) {
+deleteBeatsToBeginning(times, cut:=false)
+{
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToBeginning(times)
     send, %delete%
@@ -252,7 +278,8 @@ deleteBeatsToBeginning(times, cut:=false) {
     }
 }
 
-deleteBars(numberOfBars) {
+deleteBars(numberOfBars)
+{
     if (numberOfBars > 1)
     {
         selectBars(numberOfBars)
@@ -262,7 +289,8 @@ deleteBars(numberOfBars) {
     send, {enter}
 }
 
-clearBars(numberOfBars) {
+clearBars(numberOfBars)
+{
     selectBars(numberOfBars)
     send, {delete}
     if (numberOfBars > 1)
@@ -272,13 +300,15 @@ clearBars(numberOfBars) {
     }
 }
 
-changeBars(numberOfBars) {
+changeBars(numberOfBars)
+{
     if (numberOfBars > 1)
         deleteBars(numberOfBars - 1)
     clearBars(1)
 }
 
-changeBeats(numberOfBeats) {
+changeBeats(numberOfBeats)
+{
     if (numberOfBeats = 1)
     {
         replaceWithRest()
@@ -292,52 +322,62 @@ changeBeats(numberOfBeats) {
     }
 }
 
-undo(times) {
+undo(times)
+{
     loop, %times%
     {
         send, {ctrl down}z{ctrl up}
     }
 }
 
-redo(times) {
+redo(times)
+{
     loop, %times%
     {
         send, {ctrl down}Z{ctrl up}
     }
 }
 
-paste() {
+paste()
+{
     send, {ctrl down}v{ctrl up}
     sleep, DIALOG_DELAY
     send, {enter}
 }
 
-replaceWithRest() {
+replaceWithRest()
+{
     send, r
 }
 
-insertBeat() {
+insertBeat()
+{
     send, {insert}
 }
 
-insertBeatToBeginning() {
+insertBeatToBeginning()
+{
     send, {home}{insert}
 }
 
-appendBeat() {
+appendBeat()
+{
     ; Could be better.
     send, {enter}
 }
 
-appendBeatToEnd() {
+appendBeatToEnd()
+{
     send, {end}{enter}
 }
 
-insertBar() {
+insertBar()
+{
     send, {ctrl down}{insert}{ctrl up}
 }
 
-appendBar() {
+appendBar()
+{
     ; Uses clipboard -- not optimal.
     insertBar()
     send, {right}
@@ -346,7 +386,8 @@ appendBar() {
     paste()
 }
 
-transposeUp(times) {
+transposeUp(times)
+{
     loop, %times%
     {
         ; send, {alt}nuu{enter}
@@ -354,13 +395,15 @@ transposeUp(times) {
     }
 }
 
-transposeDown(times) {
+transposeDown(times)
+{
     loop, %times%
     {
         send, {alt}{right 4}{down 20}{enter}
     }
 }
 
-deselect() {
+deselect()
+{
     send, {escape}
 }
