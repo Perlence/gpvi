@@ -178,6 +178,16 @@ goToPreviousMarker(number)
     send, {shift down}{tab %number%}{shift up}
 }
 
+alternateWindow()
+{
+    curId := WinActive("Guitar Pro 5")
+    winGet, id, list, Guitar Pro 5
+    if id > 1
+    {
+        winActivate, ahk_id %id2%
+    }
+}
+
 insertMarker()
 {
     send, {shift down}{insert}{shift up}

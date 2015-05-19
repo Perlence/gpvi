@@ -191,6 +191,12 @@ loop
         resetState()
         return
 
+    ; Window navigation
+    ^6::
+        alternateWindow()
+        resetState()
+        return
+
     ; Deletion
     x::
         if (mode = "VISUAL")
