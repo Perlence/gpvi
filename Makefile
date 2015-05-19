@@ -1,5 +1,5 @@
 NODEMON = nodemon
-GPVI = gpvi.ahk
+GPVI = gpvi\gpvi.ahk
 AUTOHOTKEY = "c:\Program Files\AutoHotkey\AutoHotkey.exe"
 
 .PHONY: watch
