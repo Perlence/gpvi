@@ -9,6 +9,13 @@ setWorkingDir, %A_ScriptDir%
 global mode, repeat, repeatSet, awaitsMotion
 resetState()
 
+loop
+{
+    winWaitActive, Guitar Pro 5
+    updateTitle()
+    sleep, 1000
+}
+
 #if WinActive("Guitar Pro 5")
     escape::
         send, {escape}

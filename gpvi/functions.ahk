@@ -9,6 +9,7 @@ resetState(state:="")
     repeat := state.hasKey("repeat") ? state["repeat"] : 1
     repeatSet := state.hasKey("repeat") ? state["repeat"] : false
     awaitsMotion := state.hasKey("awaitsMotion") ? state["awaitsMotion"] : ""
+    updateTitle()
 }
 
 /**
@@ -19,7 +20,10 @@ setState(state:="")
     state := state ? state : {}
     global mode, repeat, awaitsMotion
     if (state.hasKey("mode"))
+    {
         mode := state["mode"]
+        updateTitle()
+    }
     if (state.hasKey("repeat"))
         repeat := state["repeat"]
     if (state.hasKey("repeatSet"))
@@ -54,6 +58,14 @@ transitState()
     else if (mode = "V-LINE")
         state["mode"] := "V-LINE"
     resetState(state)
+}
+
+updateTitle()
+{
+    global mode
+    winGetTitle, winTitle, Guitar Pro 5
+    newTitle := regExReplace(winTitle, "^(Guitar Pro 5 - .*?)( - (NORMAL|VISUAL|V-LINE|INSERT))?$", "$1 - " . mode)
+    winSetTitle, Guitar Pro 5, , %newTitle%
 }
 
 moveCursor(direction, times)
