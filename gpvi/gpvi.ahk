@@ -202,7 +202,7 @@ loop
     x::
         if (mode = "VISUAL")
         {
-            deleteBeats(1)
+            deleteBeats()
         }
         else
         {
@@ -214,7 +214,7 @@ loop
         keyWait, shift
         if (mode = "VISUAL")
         {
-            deleteBars(1)
+            deleteBars()
         }
         else
         {
@@ -230,12 +230,12 @@ loop
         }
         else if (mode = "VISUAL")
         {
-            deleteBeats(1)
+            deleteBeats()
             resetState()
         }
         else if (mode = "V-BAR")
         {
-            deleteBars(1)
+            deleteBars()
             resetState()
         }
         else
@@ -320,12 +320,12 @@ loop
         }
         else if (mode = "VISUAL")
         {
-            deleteBeats(1)
+            deleteBeats()
             resetState({mode: "INSERT"})
         }
         else if (mode = "V-BAR")
         {
-            deleteBars(1)
+            deleteBars()
             insertBar()
             resetState({mode: "INSERT"})
         }
@@ -338,7 +338,7 @@ loop
         keyWait, shift
         if (mode = "VISUAL")
         {
-            deleteBars(1)
+            deleteBars()
             insertBar()
             resetState({mode: "INSERT"})
         }
@@ -351,12 +351,12 @@ loop
     s::
         if (mode = "VISUAL")
         {
-            deleteBeats(1)
+            deleteBeats()
             resetState({mode: "INSERT"})
         }
         else if (mode = "V-BAR")
         {
-            deleteBars(1)
+            deleteBars()
             insertBar()
             resetState({mode: "INSERT"})
         }

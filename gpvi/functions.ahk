@@ -68,7 +68,7 @@ updateTitle()
     winSetTitle, %WIN_TITLE%, , %newTitle%
 }
 
-moveCursor(direction, times)
+moveCursor(direction, times:=1)
 {
     global mode
     if (mode = "VISUAL")
@@ -82,7 +82,7 @@ moveCursor(direction, times)
         send, {ctrl up}{shift up}
 }
 
-goToEnd(times)
+goToEnd(times:=1)
 {
     global mode
     if (mode = "VISUAL")
@@ -99,7 +99,7 @@ goToEnd(times)
         send, {shift up}
 }
 
-goToBeginning(times)
+goToBeginning(times:=1)
 {
     global mode
     if (mode = "VISUAL")
@@ -116,7 +116,7 @@ goToBeginning(times)
         send, {shift up}
 }
 
-goToBeginningOfNextBar(times)
+goToBeginningOfNextBar(times:=1)
 {
     global mode
     if (mode = "VISUAL")
@@ -133,16 +133,16 @@ goToBeginningOfNextBar(times)
         send, {shift up}
 }
 
-goToBeatOfBar(number)
+goToBeatOfBar(number:=1)
 {
-    goToBeginning(1)
+    goToBeginning()
     if (number > 1)
     {
         moveCursor("right", (number - 1))
     }
 }
 
-goToAbsoluteBeat(number)
+goToAbsoluteBeat(number:=1)
 {
     goToBeginningOfScore()
     if (number > 1)
@@ -159,21 +159,21 @@ goToBeginningOfScore()
 goToEndOfScore()
 {
     send, {ctrl down}{end}{ctrl up}
-    goToBeginning(1)
+    goToBeginning()
 }
 
-goToBar(number)
+goToBar(number:=1)
 {
     goToBeginningOfScore()
     goToBeginningOfNextBar(number - 1)
 }
 
-goToNextMarker(number)
+goToNextMarker(number:=1)
 {
     send, {ctrl down}{tab %number%}{ctrl up}
 }
 
-goToPreviousMarker(number)
+goToPreviousMarker(number:=1)
 {
     send, {shift down}{tab %number%}{shift up}
 }
@@ -201,7 +201,7 @@ listMarkers()
     send, {alt}{right 6}{down 2}{enter}
 }
 
-selectBeats(numberOfBeats)
+selectBeats(numberOfBeats:=1)
 {
     direction := (numberOfBeats > 0) ? "right" : "left"
     if (numberOfBeats < 0) {
@@ -211,7 +211,7 @@ selectBeats(numberOfBeats)
     send {shift down}{up}{down}{%direction% %times%}{shift up}
 }
 
-selectBars(numberOfBars)
+selectBars(numberOfBars:=1)
 {
     direction := (numberOfBars > 0) ? "right" : "left"
     times := abs(numberOfBars)
@@ -224,21 +224,21 @@ selectBars(numberOfBars)
     send, {ctrl up}{shift up}
 }
 
-selectBeatsToEnd(times)
+selectBeatsToEnd(times:=1)
 {
     send, {shift down}{up}{down}
     goToEnd(times)
     send, {shift up}
 }
 
-selectBeatsToBeginning(times)
+selectBeatsToBeginning(times:=1)
 {
     send, {left}{shift down}{up}{down}
     goToBeginning(times)
     send, {home}{shift up}
 }
 
-selectBeatsToBeginningOfNextBar(times)
+selectBeatsToBeginningOfNextBar(times:=1)
 {
     send, {shift down}{up}{down}
     goToBeginningOfNextBar(times)
@@ -250,7 +250,7 @@ selectToMouse()
     send {shift down}{LButton}{shift up}
 }
 
-deleteNotes(numberOfNotes)
+deleteNotes(numberOfNotes:=1)
 {
     loop, % abs(numberOfNotes)
     {
@@ -265,7 +265,7 @@ deleteNotes(numberOfNotes)
     }
 }
 
-deleteBeats(times, cut:=false)
+deleteBeats(times:=1, cut:=false)
 {
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     if (abs(times) = 1)
@@ -283,7 +283,7 @@ deleteBeats(times, cut:=false)
     }
 }
 
-deleteBeatsToEnd(times, cut:=false)
+deleteBeatsToEnd(times:=1, cut:=false)
 {
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToEnd(times)
@@ -295,7 +295,7 @@ deleteBeatsToEnd(times, cut:=false)
     }
 }
 
-deleteBeatsToBeginning(times, cut:=false)
+deleteBeatsToBeginning(times:=1, cut:=false)
 {
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToBeginning(times)
@@ -307,7 +307,7 @@ deleteBeatsToBeginning(times, cut:=false)
     }
 }
 
-deleteBars(numberOfBars)
+deleteBars(numberOfBars:=1)
 {
     if (numberOfBars > 1)
     {
@@ -318,7 +318,7 @@ deleteBars(numberOfBars)
     send, {enter}
 }
 
-clearBars(numberOfBars)
+clearBars(numberOfBars:=1)
 {
     selectBars(numberOfBars)
     send, {delete}
@@ -329,14 +329,14 @@ clearBars(numberOfBars)
     }
 }
 
-changeBars(numberOfBars)
+changeBars(numberOfBars:=1)
 {
     if (numberOfBars > 1)
         deleteBars(numberOfBars - 1)
-    clearBars(1)
+    clearBars()
 }
 
-changeBeats(numberOfBeats)
+changeBeats(numberOfBeats:=1)
 {
     if (numberOfBeats = 1)
     {
@@ -351,7 +351,7 @@ changeBeats(numberOfBeats)
     }
 }
 
-undo(times)
+undo(times:=1)
 {
     loop, %times%
     {
@@ -359,7 +359,7 @@ undo(times)
     }
 }
 
-redo(times)
+redo(times:=1)
 {
     loop, %times%
     {
@@ -415,7 +415,7 @@ appendBar()
     paste()
 }
 
-transposeUp(times)
+transposeUp(times:=1)
 {
     loop, %times%
     {
@@ -424,7 +424,7 @@ transposeUp(times)
     }
 }
 
-transposeDown(times)
+transposeDown(times:=1)
 {
     loop, %times%
     {

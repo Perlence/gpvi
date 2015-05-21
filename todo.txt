@@ -10,7 +10,7 @@ x 2015-05-19 Keys 'e', 'b' and 'w' move bar selection @v-line-mode
 x 2015-05-19 Add 'gg' and 'G' keys
 2015-05-19 Cursor keys should do the same as 'hjkl' keys, Backspace should go left, Enter should go down
 x 2015-05-19 Bug: command '1G' goes to the end of the song
-2015-05-19 Add default argument 1 to most functions
+x 2015-05-19 Add default argument 1 to most functions
 x 2015-05-19 Add marker navigation with '[[' and ']]' keys
 2015-05-20 Go to beat of bar doesn't respect bar length, i.e. it will move cursor further
 2015-05-20 Join bars with 'J'
