@@ -25,3 +25,9 @@ x 2015-05-20 Mouse: right click to select to mouse cursor
 x 2015-05-20 Display current mode
 2015-05-21 State per window
 x 2015-05-21 Rename V-LINE to V-BAR
+2015-05-21 Add '[ab]b' text object
+2015-05-21 Deselection doesn't work after yanking
+2015-05-21 Add max and min math functions
+2015-05-21 Fix pasting on the end of the bar
+2015-05-21 Put deleted beats in the clipboard
+2015-05-21 Switch to Visual mode when mouse selects

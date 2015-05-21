@@ -50,6 +50,10 @@ loop
         {
             changeBeats(-repeat)
         }
+        else if (awaitsMotion = "y")
+        {
+            yankBeats(-repeat)
+        }
         else
         {
             moveCursor("left", repeat)
@@ -73,6 +77,10 @@ loop
         {
             changeBeats(repeat)
         }
+        else if (awaitsMotion = "y")
+        {
+            yankBeats(repeat)
+        }
         else
         {
             moveCursor("right", repeat)
@@ -85,17 +93,27 @@ loop
         if awaitsMotion in d,c
         {
             deleteBeatsToEnd(repeat)
+            transitState()
+        }
+        else if (awaitsMotion = "y")
+        {
+            yankBeatsToEnd(repeat)
+            resetState()
         }
         else
         {
             goToEnd(repeat)
+            transitState()
         }
-        transitState()
         return
     b::
         if awaitsMotion in d,c
         {
             deleteBeatsToBeginning(repeat)
+        }
+        else if (awaitsMotion = "y")
+        {
+            yankBeatsToBeginning(repeat)
         }
         else
         {
@@ -108,6 +126,10 @@ loop
         {
             ; selectBeatsToBeginningOfNextBar(repeat)
             deleteBeatsToEnd(repeat)
+        }
+        else if (awaitsMotion = "y")
+        {
+            yankBeatsToEnd(repeat)
         }
         else
         {
@@ -250,7 +272,7 @@ loop
         resetState()
         return
 
-    ; Undo/redo keys
+    ; Undo/redo
     u::
         undo(repeat)
         resetState()
@@ -407,7 +429,51 @@ loop
         }
         return
 
+    ; Copy/paste
+    y::
+        if (awaitsMotion = "y")
+        {
+            yankBars(repeat)
+            transitState()
+        }
+        else if (mode = "VISUAL")
+        {
+            yankBeats()
+            resetState()
+        }
+        else if (mode = "V-BAR")
+        {
+            yankBars()
+            resetState()
+        }
+        else
+        {
+            setState({awaitsMotion: "y"})
+        }
+        return
+    +y::
+        yankBars(repeat)
+        resetState()
+        return
+    ; p::
+    ;     return
+    +p::
+        keyWait, shift
+        if (awaitsMotion = "g")
+        {
+            putLeft("insert", repeat)
+        }
+        else
+        {
+            put("insert", repeat)
+        }
+        resetState()
+        return
+
     ; Mouse
     RButton::
         selectToMouse()
+        return
+    MButton::
+        putToMouse()
         return

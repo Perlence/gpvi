@@ -53,6 +53,8 @@ transitState()
     state := {}
     if (awaitsMotion = "c")
         state["mode"] := "INSERT"
+    else if (awaitsMotion = "y")
+        state["mode"] := "NORMAL"
     else if (mode = "VISUAL")
         state["mode"] := "VISUAL"
     else if (mode = "V-BAR")
@@ -247,7 +249,7 @@ selectBeatsToBeginningOfNextBar(times:=1)
 
 selectToMouse()
 {
-    send {shift down}{LButton}{shift up}
+    send {shift down}{lbutton}{shift up}
 }
 
 deleteNotes(numberOfNotes:=1)
@@ -351,6 +353,99 @@ changeBeats(numberOfBeats:=1)
     }
 }
 
+yank(times:=1)
+{
+    send, {ctrl down}c{ctrl up}
+    sleep, %DIALOG_DELAY%
+    if (winActive("Copy")){
+        if (times > 1)
+        {
+            times -= 1
+            send, {tab}{up %times%}{enter}
+        }
+        send, {enter}
+        sleep, 1000
+        ; FIXME: Does not actually deselect
+        deselect()
+    }
+    else
+    {
+        deselect()
+    }
+}
+
+yankBeats(times:=1)
+{
+    selectBeats(times)
+    yank()
+}
+
+yankBeatsToBeginning(times:=1)
+{
+    selectBeatsToBeginning(times)
+    yank()
+}
+
+yankBeatsToBeginningOfNextBar(times:=1)
+{
+    selectBeatsToBeginningOfNextBar(times)
+    yank()
+}
+
+yankBeatsToEnd(times:=1)
+{
+    selectBeatsToEnd(times)
+    yank()
+}
+
+yankBars(times:=1)
+{
+    yank(times)
+}
+
+put(putMode:="overwrite", times:=1)
+{
+    send, {ctrl down}v{ctrl up}
+    sleep, %DIALOG_DELAY%
+    if (winActive("Paste"))
+    {
+        send, {tab 2}
+
+        if (putMode = "insert")
+            send, {down}
+        else if (putMode = "append")
+            send, {down 2}
+
+        if (times > 1)
+        {
+            times -= 1
+            send, {tab}{up %times%}
+        }
+        send, {enter}
+    }
+    else
+    {
+        loop, % times - 1
+        {
+            ; FIXME: Will mess up next bar if current bar misses one beat and
+            ; beats in clipboard make it complete
+            send, {enter}{ctrl down}v{ctrl up}
+        }
+    }
+}
+
+putLeft(putMode:="overwrite", times:=1)
+{
+    put(putMode, times)
+    moveCursor("right")
+}
+
+putToMouse()
+{
+    send, {lbutton}
+    putLeft("insert")
+}
+
 undo(times:=1)
 {
     loop, %times%
@@ -365,13 +460,6 @@ redo(times:=1)
     {
         send, {ctrl down}Z{ctrl up}
     }
-}
-
-paste()
-{
-    send, {ctrl down}v{ctrl up}
-    sleep, %DIALOG_DELAY%
-    send, {enter}
 }
 
 replaceWithRest()
@@ -412,7 +500,8 @@ appendBar()
     send, {right}
     deleteBeatsToEnd(1, true)
     send, {left}
-    paste()
+    put()
+    send, {right}
 }
 
 transposeUp(times:=1)
