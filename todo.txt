@@ -30,4 +30,5 @@ x 2015-05-21 Rename V-LINE to V-BAR
 2015-05-21 Add max and min math functions
 2015-05-21 Fix pasting on the end of the bar
 2015-05-21 Put deleted beats in the clipboard
-2015-05-21 Switch to Visual mode when mouse selects
+x 2015-05-21 Switch to Visual mode when mouse selects
+2015-05-21 Visual insert mode
