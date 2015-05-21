@@ -23,3 +23,4 @@ x 2015-05-19 Add marker navigation with '[[' and ']]' keys
 2015-05-20 Switch between GP5 windows with '[b' and ']b'
 x 2015-05-20 Display current mode
 2015-05-21 State per window
+2015-05-21 Rename V-LINE to V-BAR

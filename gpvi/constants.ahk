@@ -1,3 +1,6 @@
+; Guitar Pro 5 window title.
+WIN_TITLE := "Guitar Pro 5 ahk_class TMainForm"
+
 ; Wait for dialog to show up.
 DIALOG_DELAY := 50
 

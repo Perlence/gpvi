@@ -62,10 +62,10 @@ transitState()
 
 updateTitle()
 {
-    global mode
-    winGetTitle, winTitle, Guitar Pro 5
+    global WIN_TITLE, mode
+    winGetTitle, winTitle, %WIN_TITLE%
     newTitle := regExReplace(winTitle, "^(Guitar Pro 5 - .*?)( - (NORMAL|VISUAL|V-LINE|INSERT))?$", "$1 - " . mode)
-    winSetTitle, Guitar Pro 5, , %newTitle%
+    winSetTitle, %WIN_TITLE%, , %newTitle%
 }
 
 moveCursor(direction, times)
@@ -180,10 +180,12 @@ goToPreviousMarker(number)
 
 alternateWindow()
 {
-    curId := WinActive("Guitar Pro 5")
-    winGet, id, list, Guitar Pro 5
+    global WIN_TITLE
+    curId := WinActive(WIN_TITLE)
+    winGet, id, list, %WIN_TITLE%
     if id > 1
     {
+        winShow, ahk_id %id2%
         winActivate, ahk_id %id2%
     }
 }

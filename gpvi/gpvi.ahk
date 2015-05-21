@@ -2,6 +2,7 @@
 #singleInstance, force
 sendMode, input
 setWorkingDir, %A_ScriptDir%
+detectHiddenWindows, on
 
 #include %A_ScriptDir%\constants.ahk
 #include %A_ScriptDir%\functions.ahk
@@ -11,12 +12,12 @@ resetState()
 
 loop
 {
-    winWaitActive, Guitar Pro 5
+    winWaitActive, %WIN_TITLE%
     updateTitle()
     sleep, %TITLE_UPDATE_DELAY%
 }
 
-#if WinActive("Guitar Pro 5")
+#if WinActive(WIN_TITLE)
     escape::
         send, {escape}
         resetState()
@@ -26,7 +27,7 @@ loop
         resetState()
         return
 
-#if WinActive("Guitar Pro 5") and mode != "INSERT"
+#if WinActive(WIN_TITLE) and mode != "INSERT"
     ; Number keys
     0::appendNumber(0)
     1::appendNumber(1)
