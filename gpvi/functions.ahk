@@ -72,7 +72,7 @@ updateTitle()
 
 _openProcess(processId, desiredAccess:=0x10, inheritHandle:=false)
 {
-    return dllCall("OpenProcess", UInt, desiredAccess, Int, inheritHandle, UInt, processId)
+    return dllCall("OpenProcess", UInt, desiredAccess, Char, inheritHandle, UInt, processId)
 }
 
 _closeHandle(hProcess)
@@ -80,11 +80,14 @@ _closeHandle(hProcess)
     dllCall("CloseHandle", UInt, hProcess)
 }
 
-_readProcessMemory(hProcess, baseAddress, size)
+_readProcessMemory(hProcess, baseAddress, type)
 {
+    global TYPE_SIZES
+    size := TYPE_SIZES[type]
     varSetCapacity(buffer, size, 0)
-    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, UChar, &buffer, UInt, size, UPtr, 0)
-    return buffer
+    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, type, &buffer, UInt, size, UPtr, 0)
+    data := numGet(buffer, , type)
+    return data
 }
 
 getHProcess()
@@ -97,12 +100,19 @@ getHProcess()
     return hProcess
 }
 
+readOffset(offset, type)
+{
+    global BASE_ADDR, startAddr
+    hProcess := getHProcess()
+    if (startAddr = "")
+        startAddr := _readProcessMemory(hProcess, BASE_ADDR, "UInt")
+    return _readProcessMemory(hProcess, (startAddr + offset), type)
+}
+
 getSelectionMode()
 {
-    global ADDR_IS_SELECTED
-    hProcess := getHProcess()
-    selectedRaw := _readProcessMemory(hProcess, ADDR_IS_SELECTED, 2)
-    selected := numGet(selectedRaw, , "UWord")
+    global IS_SELECTED_OFFSET
+    selected := readOffset(IS_SELECTED_OFFSET, "UShort")
     if (selected = 0x01)
         return "beats"
     else if (selected = 0x0101)
@@ -113,12 +123,9 @@ getSelectionMode()
 
 getCursorPosition()
 {
-    global ADDR_CURSOR_X, ADDR_CURSOR_Y
-    hProcess := getHProcess()
-    cursorXRaw := _readProcessMemory(hProcess, ADDR_CURSOR_X, 4)
-    cursorX := numGet(cursorXRaw, , "UInt")
-    cursorXRaw := _readProcessMemory(hProcess, ADDR_CURSOR_Y, 4)
-    cursorY := numGet(cursorYRaw, , "UInt")
+    global CURSOR_X_OFFSET, CURSOR_Y_OFFSET
+    cursorX := readOffset(CURSOR_X_OFFSET, "UInt")
+    cursorY := readOffset(CURSOR_Y_OFFSET, "UInt")
     return [cursorX, cursorY]
 }
 

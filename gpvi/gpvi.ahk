@@ -7,7 +7,7 @@ detectHiddenWindows, on
 #include %A_ScriptDir%\constants.ahk
 #include %A_ScriptDir%\functions.ahk
 
-global mode, repeat, repeatSet, awaitsMotion, hProcess
+global mode, repeat, repeatSet, awaitsMotion, hProcess, startAddr
 resetState()
 
 onExit("exitFunc")

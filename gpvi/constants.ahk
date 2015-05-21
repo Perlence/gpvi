@@ -1,3 +1,9 @@
+TYPE_SIZES := { "UChar": 1, "Char": 1
+              , "UShort": 2, "Short": 2
+              , "UInt": 4, "Int": 4
+              , "UFloat": 4, "Float": 4
+              , "Int64": 8, "Double": 8 }
+
 ; Guitar Pro 5 window title.
 WIN_TITLE := "Guitar Pro 5 ahk_class TMainForm"
 
@@ -8,16 +14,16 @@ BAR_SELECTION_DELAY := 10
 ; Wait after each main loop iteration.
 LOOP_DELAY := 5
 
-; Addresses
-
+; Base address
+BASE_ADDR := 0x00776e10
 ; Current bar: UInt
-ADDR_CURSOR_BAR := 0x02F3A7C8
+CURSOR_BAR_OFFSET := 0x27D4
 ; Beat number under cursor, bar-relative: UInt
-ADDR_CURSOR_X := 0x02F3A7CC
+CURSOR_X_OFFSET := 0x27D8
 ; Guitar string under cursor: UInt
-ADDR_CURSOR_Y := 0x02F3A7D0
+CURSOR_Y_OFFSET := 0x27DC
 ; Selection mode: UChar
-ADDR_IS_SELECTED := 0x02F3A7EC
+IS_SELECTED_OFFSET := 0x27F8
 ; dynamic of note under cursor: UChar
 ;   ppp: 27
 ;   pp:  28
