@@ -269,6 +269,7 @@ deleteNotes(numberOfNotes:=1)
 
 deleteBeats(times:=1, cut:=false)
 {
+    global mode
     delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     if (abs(times) = 1)
     {
@@ -276,7 +277,11 @@ deleteBeats(times:=1, cut:=false)
         {
             send, {left}
         }
-        send, {shift down}{up}{down}{shift up}%delete%
+        if (mode = "NORMAL")
+        {
+            send, {shift down}{up}{down}{shift up}
+        }
+        send, %delete%
     }
     else
     {
