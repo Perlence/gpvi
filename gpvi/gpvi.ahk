@@ -406,3 +406,8 @@ loop
             resetState({mode: "V-BAR"})
         }
         return
+
+    ; Mouse
+    RButton::
+        selectToMouse()
+        return

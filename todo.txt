@@ -18,7 +18,8 @@ x 2015-05-19 Add marker navigation with '[[' and ']]' keys
 2015-05-20 Add 'ZZ' and 'ZQ' keys
 2015-05-20 Delete bars on 'R' in Visual mode
 2015-05-20 Change dynamics with 'gu' and 'gU' keys
-2015-05-20 Mouse: right click to select to mouse cursor, middle click to execute 'gP'
+x 2015-05-20 Mouse: right click to select to mouse cursor
+2015-05-20 Mouse: middle click to execute 'gP'
 2015-05-20 Text object: '[ai]s' -- in section, i.e. between markers
 2015-05-20 Switch between GP5 windows with '[b' and ']b'
 x 2015-05-20 Display current mode

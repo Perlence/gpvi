@@ -245,6 +245,11 @@ selectBeatsToBeginningOfNextBar(times)
     send, {shift up}
 }
 
+selectToMouse()
+{
+    send {shift down}{LButton}{shift up}
+}
+
 deleteNotes(numberOfNotes)
 {
     loop, % abs(numberOfNotes)
