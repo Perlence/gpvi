@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CheatTable CheatEngineTableVersion="18">
+  <CheatEntries>
+    <CheatEntry>
+      <ID>1</ID>
+      <Description>"Cursor X"</Description>
+      <LastState Value="1" Activated="0" RealAddress="05E63494"/>
+      <Color>80000008</Color>
+      <VariableType>4 Bytes</VariableType>
+      <Address>00776e10</Address>
+      <Offsets>
+        <Offset>27D8</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>2</ID>
+      <Description>"Cursor Y"</Description>
+      <LastState Value="6" Activated="0" RealAddress="05E63498"/>
+      <Color>80000008</Color>
+      <VariableType>4 Bytes</VariableType>
+      <Address>00776e10</Address>
+      <Offsets>
+        <Offset>27DC</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>3</ID>
+      <Description>"Selection"</Description>
+      <LastState Value="0" Activated="0" RealAddress="05E634B4"/>
+      <Color>80000008</Color>
+      <VariableType>Byte</VariableType>
+      <Address>00776e10</Address>
+      <Offsets>
+        <Offset>27F8</Offset>
+      </Offsets>
+    </CheatEntry>
+    <CheatEntry>
+      <ID>19</ID>
+      <Description>"Note dynamic"</Description>
+      <LastState Value="32" Activated="0" RealAddress="0264DAC0"/>
+      <Color>80000008</Color>
+      <VariableType>4 Bytes</VariableType>
+      <Address>05260924</Address>
+      <Offsets>
+        <Offset>4C</Offset>
+      </Offsets>
+    </CheatEntry>
+  </CheatEntries>
+  <UserdefinedSymbols/>
+</CheatTable>
