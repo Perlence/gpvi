@@ -55,8 +55,8 @@ transitState()
         state["mode"] := "INSERT"
     else if (mode = "VISUAL")
         state["mode"] := "VISUAL"
-    else if (mode = "V-LINE")
-        state["mode"] := "V-LINE"
+    else if (mode = "V-BAR")
+        state["mode"] := "V-BAR"
     resetState(state)
 }
 
@@ -64,7 +64,7 @@ updateTitle()
 {
     global WIN_TITLE, mode
     winGetTitle, winTitle, %WIN_TITLE%
-    newTitle := regExReplace(winTitle, "^(Guitar Pro 5 - .*?)( - (NORMAL|VISUAL|V-LINE|INSERT))?$", "$1 - " . mode)
+    newTitle := regExReplace(winTitle, "^(Guitar Pro 5 - .*?)( - (NORMAL|VISUAL|V-BAR|INSERT))?$", "$1 - " . mode)
     winSetTitle, %WIN_TITLE%, , %newTitle%
 }
 
@@ -73,12 +73,12 @@ moveCursor(direction, times)
     global mode
     if (mode = "VISUAL")
         send, {shift down}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {ctrl down}{shift down}
     send, {%direction% %times%}
     if (mode = "VISUAL")
         send, {shift up}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {ctrl up}{shift up}
 }
 
@@ -87,7 +87,7 @@ goToEnd(times)
     global mode
     if (mode = "VISUAL")
         send, {shift down}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
@@ -95,7 +95,7 @@ goToEnd(times)
     }
     if (mode = "VISUAL")
         send, {shift up}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift up}
 }
 
@@ -104,7 +104,7 @@ goToBeginning(times)
     global mode
     if (mode = "VISUAL")
         send, {shift down}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
@@ -112,7 +112,7 @@ goToBeginning(times)
     }
     if (mode = "VISUAL")
         send, {shift up}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift up}
 }
 
@@ -121,7 +121,7 @@ goToBeginningOfNextBar(times)
     global mode
     if (mode = "VISUAL")
         send, {shift down}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
@@ -129,7 +129,7 @@ goToBeginningOfNextBar(times)
     }
     if (mode = "VISUAL")
         send, {shift up}
-    else if (mode = "V-LINE")
+    else if (mode = "V-BAR")
         send, {shift up}
 }
 

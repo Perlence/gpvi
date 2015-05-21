@@ -233,7 +233,7 @@ loop
             deleteBeats(1)
             resetState()
         }
-        else if (mode = "V-LINE")
+        else if (mode = "V-BAR")
         {
             deleteBars(1)
             resetState()
@@ -323,7 +323,7 @@ loop
             deleteBeats(1)
             resetState({mode: "INSERT"})
         }
-        else if (mode = "V-LINE")
+        else if (mode = "V-BAR")
         {
             deleteBars(1)
             insertBar()
@@ -354,7 +354,7 @@ loop
             deleteBeats(1)
             resetState({mode: "INSERT"})
         }
-        else if (mode = "V-LINE")
+        else if (mode = "V-BAR")
         {
             deleteBars(1)
             insertBar()
@@ -379,7 +379,7 @@ loop
             deselect()
             resetState()
         }
-        else if (mode = "V-LINE")
+        else if (mode = "V-BAR")
         {
             resetState({mode: "VISUAL"})
         }
@@ -391,18 +391,18 @@ loop
         return
     +v::
         keyWait, shift
-        if (mode = "V-LINE")
+        if (mode = "V-BAR")
         {
             deselect()
             resetState()
         }
         else if (mode = "VISUAL")
         {
-            resetState({mode: "V-LINE"})
+            resetState({mode: "V-BAR"})
         }
         else
         {
             selectBars(repeat)
-            resetState({mode: "V-LINE"})
+            resetState({mode: "V-BAR"})
         }
         return
