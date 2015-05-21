@@ -217,7 +217,7 @@ selectBars(numberOfBars)
     loop, %times%
     {
         send, {%direction%}
-        sleep, BAR_SELECTION_DELAY
+        sleep, %BAR_SELECTION_DELAY%
     }
     send, {ctrl up}{shift up}
 }
@@ -307,7 +307,7 @@ deleteBars(numberOfBars)
         selectBars(numberOfBars)
     }
     send, {ctrl down}x{ctrl up}
-    sleep, DIALOG_DELAY
+    sleep, %DIALOG_DELAY%
     send, {enter}
 }
 
@@ -363,7 +363,7 @@ redo(times)
 paste()
 {
     send, {ctrl down}v{ctrl up}
-    sleep, DIALOG_DELAY
+    sleep, %DIALOG_DELAY%
     send, {enter}
 }
 

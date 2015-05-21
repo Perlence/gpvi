@@ -13,7 +13,7 @@ loop
 {
     winWaitActive, Guitar Pro 5
     updateTitle()
-    sleep, 1000
+    sleep, %TITLE_UPDATE_DELAY%
 }
 
 #if WinActive("Guitar Pro 5")
