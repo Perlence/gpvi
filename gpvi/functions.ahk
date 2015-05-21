@@ -70,6 +70,58 @@ updateTitle()
     winSetTitle, %WIN_TITLE%, , %newTitle%
 }
 
+_openProcess(processId, desiredAccess:=0x10, inheritHandle:=false)
+{
+    return dllCall("OpenProcess", UInt, desiredAccess, Int, inheritHandle, UInt, processId)
+}
+
+_closeHandle(hProcess)
+{
+    dllCall("CloseHandle", UInt, hProcess)
+}
+
+_readProcessMemory(hProcess, baseAddress, size)
+{
+    varSetCapacity(buffer, size, 0)
+    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, UChar, &buffer, UInt, size, UPtr, 0)
+    return buffer
+}
+
+getHProcess()
+{
+    global hProcess
+    if (hProcess)
+        return hProcess
+    winGet, pid, pid, %WIN_TITLE%
+    hProcess := _openProcess(pid)
+    return hProcess
+}
+
+getSelectionMode()
+{
+    global ADDR_IS_SELECTED
+    hProcess := getHProcess()
+    selectedRaw := _readProcessMemory(hProcess, ADDR_IS_SELECTED, 2)
+    selected := numGet(selectedRaw, , "UWord")
+    if (selected = 0x01)
+        return "beats"
+    else if (selected = 0x0101)
+        return "bars"
+    else
+        return ""
+}
+
+getCursorPosition()
+{
+    global ADDR_CURSOR_X, ADDR_CURSOR_Y
+    hProcess := getHProcess()
+    cursorXRaw := _readProcessMemory(hProcess, ADDR_CURSOR_X, 4)
+    cursorX := numGet(cursorXRaw, , "UInt")
+    cursorXRaw := _readProcessMemory(hProcess, ADDR_CURSOR_Y, 4)
+    cursorY := numGet(cursorYRaw, , "UInt")
+    return [cursorX, cursorY]
+}
+
 moveCursor(direction, times:=1)
 {
     global mode

@@ -7,14 +7,30 @@ detectHiddenWindows, on
 #include %A_ScriptDir%\constants.ahk
 #include %A_ScriptDir%\functions.ahk
 
-global mode, repeat, repeatSet, awaitsMotion
+global mode, repeat, repeatSet, awaitsMotion, hProcess
 resetState()
+
+onExit("exitFunc")
+
+exitFunc(exitReason, exitCode)
+{
+    global hProcess
+    _closeHandle(hProcess)
+}
 
 loop
 {
+    global mode
     winWaitActive, %WIN_TITLE%
+    selectionMode := getSelectionMode()
+    if (selectionMode = "beats")
+        setState({mode: "VISUAL"})
+    else if (selectionMode = "bars")
+        setState({mode: "V-BAR"})
+    else if (mode = "VISUAL" or mode = "V-BAR")
+        setState({mode: "NORMAL"})
     updateTitle()
-    sleep, %TITLE_UPDATE_DELAY%
+    sleep, %LOOP_DELAY%
 }
 
 #if WinActive(WIN_TITLE)
@@ -471,9 +487,9 @@ loop
         return
 
     ; Mouse
-    RButton::
+    rbutton::
         selectToMouse()
         return
-    MButton::
+    mbutton::
         putToMouse()
         return
