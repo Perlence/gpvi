@@ -15,7 +15,7 @@ BAR_SELECTION_DELAY := 10
 LOOP_DELAY := 5
 
 ; Base address
-BASE_ADDR := 0x00776e10
+CURSOR_BASE_ADDR := 0x00776e10
 ; Current bar: UInt
 CURSOR_BAR_OFFSET := 0x27D4
 ; Beat number under cursor, bar-relative: UInt

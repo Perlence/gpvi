@@ -5,9 +5,11 @@ setWorkingDir, %A_ScriptDir%
 detectHiddenWindows, on
 
 #include %A_ScriptDir%\constants.ahk
-#include %A_ScriptDir%\functions.ahk
+#include %A_ScriptDir%\state.ahk
+#include %A_ScriptDir%\memory.ahk
+#include %A_ScriptDir%\macros.ahk
 
-global mode, repeat, repeatSet, awaitsMotion, hProcess, startAddr
+global mode, repeat, repeatSet, awaitsMotion, hProcess
 resetState()
 
 onExit("exitFunc")
