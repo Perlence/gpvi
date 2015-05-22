@@ -1,12 +1,12 @@
 2015-05-16 Inconsistency on the end of the bar @changeBeats
 x 2015-05-19 Input repeat times greater than 9
 x 2015-05-17 Remove "the" from function names
-2015-05-17 Replace mode should exit automatically if pressed key is not 1 or 2 @replace-mode
+x 2015-05-17 Replace mode should exit automatically if pressed key is not 1 or 2 @replace-mode
 2015-05-17 Delete beats and add rests @deleteBeatsToEnd @deleteBeatsToBeginning
 x 2015-05-19 'C' in Visual mode should not delete all bars, but leave one bar empty
 x 2015-05-19 Keys 'e', 'b' and 'w' move bar selection @v-line-mode
 2015-05-19 Should 'riIaAoO' take repeat numbers?
-2015-05-19 Append beat and append bar aren't great
+x 2015-05-19 Append beat and append bar aren't great
 x 2015-05-19 Add 'gg' and 'G' keys
 2015-05-19 Cursor keys should do the same as 'hjkl' keys, Backspace should go left, Enter should go down
 x 2015-05-19 Bug: command '1G' goes to the end of the song
@@ -19,7 +19,7 @@ x 2015-05-19 Add marker navigation with '[[' and ']]' keys
 2015-05-20 Delete bars on 'R' in Visual mode
 2015-05-20 Change dynamics with 'gu' and 'gU' keys
 x 2015-05-20 Mouse: right click to select to mouse cursor
-2015-05-20 Mouse: middle click to execute 'gP'
+x 2015-05-20 Mouse: middle click to execute 'gP'
 2015-05-20 Text object: '[ai]s' -- in section, i.e. between markers
 2015-05-20 Switch between GP5 windows with '[b' and ']b'
 x 2015-05-20 Display current mode

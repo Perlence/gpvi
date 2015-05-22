@@ -131,14 +131,42 @@ listMarkers()
     send, {alt}{right 6}{down 2}{enter}
 }
 
+/**
+ * Select given number of beats limited to current bar.
+ *
+ * @param {int} numberOfBeats - number of beats to select. If number is
+ *   positive then select beats to the right, else select beats to the
+ *   left.
+ * @return {bool} - return `true` if selection was made.
+ */
 selectBeats(numberOfBeats:=1)
 {
-    direction := (numberOfBeats > 0) ? "right" : "left"
-    if (numberOfBeats < 0) {
-        send {left}
+    cursorCur := getCursorPosition()[1]
+    if (numberOfBeats < 0)
+    {
+        if (cursorCur = 1)
+            return false
+        times := min(cursorCur - 1, abs(numberOfBeats)) - 1
+        send, {left}{shift down}{up}{down}{left %times%}{shift up}
     }
-    times := abs(numberOfBeats) - 1
-    send {shift down}{up}{down}{%direction% %times%}{shift up}
+    else
+    {
+        times := abs(numberOfBeats) - 1
+        send, {shift down}{up}{down}
+        loop, %times%
+        {
+            send, {right}
+            cursorPrev := cursorCur
+            cursorCur := getCursorPosition()[1]
+            if (cursorCur != cursorPrev + 1)
+            {
+                send, {left}
+                break
+            }
+        }
+        send, {shift up}
+    }
+    return true
 }
 
 selectBars(numberOfBars:=1)
@@ -195,6 +223,9 @@ deleteNotes(numberOfNotes:=1)
     }
 }
 
+/**
+ * Delete beats in current bar.
+ */
 deleteBeats(times:=1, cut:=false)
 {
     global mode
@@ -203,6 +234,9 @@ deleteBeats(times:=1, cut:=false)
     {
         if (times < 0)
         {
+            cursor := getCursorPosition()[1]
+            if (cursor = 1)
+                return
             send, {left}
         }
         if (mode = "NORMAL")
@@ -213,8 +247,8 @@ deleteBeats(times:=1, cut:=false)
     }
     else
     {
-        selectBeats(times)
-        send, %delete%
+        if (selectBeats(times))
+            send, %delete%
     }
 }
 
@@ -307,10 +341,13 @@ yank(times:=1)
     }
 }
 
+/**
+ * Yank beats in current bar.
+ */
 yankBeats(times:=1)
 {
-    selectBeats(times)
-    yank()
+    if (selectBeats(times))
+        yank()
 }
 
 yankBeatsToBeginning(times:=1)

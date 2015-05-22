@@ -5,6 +5,7 @@ setWorkingDir, %A_ScriptDir%
 detectHiddenWindows, on
 
 #include %A_ScriptDir%\constants.ahk
+#include %A_ScriptDir%\utils.ahk
 #include %A_ScriptDir%\state.ahk
 #include %A_ScriptDir%\memory.ahk
 #include %A_ScriptDir%\macros.ahk
