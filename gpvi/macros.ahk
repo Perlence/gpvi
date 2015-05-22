@@ -137,7 +137,7 @@ listMarkers()
  * @param {int} numberOfBeats - number of beats to select. If number is
  *   positive then select beats to the right, else select beats to the
  *   left.
- * @return {int} - number of selected beats.
+ * @return {int} number of selected beats.
  */
 selectBeats(numberOfBeats:=1)
 {
@@ -382,8 +382,8 @@ put(putMode:="overwrite", times:=1)
     {
         loop, % times - 1
         {
-            ; FIXME: Will mess up next bar if current bar misses one beat and
-            ; beats in clipboard make it complete
+            ; FIXME: Will mess up next bar if current bar misses one
+            ; beat and beats in clipboard make it complete.
             send, {enter}{ctrl down}v{ctrl up}
         }
     }

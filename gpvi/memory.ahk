@@ -52,6 +52,8 @@ getSelectionMode()
 
 /**
  * Use memory magic to determine cursor position in current bar.
+ *
+ * @return {Array of UInt} cursor position [beat, string]
  */
 getCursorPosition()
 {

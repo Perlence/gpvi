@@ -457,7 +457,7 @@ loop
         }
         else if (mode = "VISUAL")
         {
-            yankBeats()
+            yank()
             resetState()
         }
         else if (mode = "V-BAR")
