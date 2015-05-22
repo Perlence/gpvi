@@ -137,7 +137,7 @@ listMarkers()
  * @param {int} numberOfBeats - number of beats to select. If number is
  *   positive then select beats to the right, else select beats to the
  *   left.
- * @return {bool} - return `true` if selection was made.
+ * @return {int} - number of selected beats.
  */
 selectBeats(numberOfBeats:=1)
 {
@@ -145,14 +145,16 @@ selectBeats(numberOfBeats:=1)
     if (numberOfBeats < 0)
     {
         if (cursorCur = 1)
-            return false
+            return 0
         times := min(cursorCur - 1, abs(numberOfBeats)) - 1
         send, {left}{shift down}{up}{down}{left %times%}{shift up}
+        return times + 1
     }
     else
     {
         times := abs(numberOfBeats) - 1
         send, {shift down}{up}{down}
+        selected := 1
         loop, %times%
         {
             send, {right}
@@ -163,10 +165,11 @@ selectBeats(numberOfBeats:=1)
                 send, {left}
                 break
             }
+            selected += 1
         }
         send, {shift up}
+        return selected
     }
-    return true
 }
 
 selectBars(numberOfBars:=1)
@@ -291,20 +294,13 @@ clearBars(numberOfBars:=1)
 {
     selectBars(numberOfBars)
     send, {delete}
-    if (numberOfBars > 1)
-    {
-        times := numberOfBars - 1
-        send, {left %times%}
-    }
+    times := numberOfBars - 1
+    send, {left %times%}
 }
 
-changeBars(numberOfBars:=1)
-{
-    if (numberOfBars > 1)
-        deleteBars(numberOfBars - 1)
-    clearBars()
-}
-
+/**
+ * Replace beats to the right with a rest.
+ */
 changeBeats(numberOfBeats:=1)
 {
     if (numberOfBeats = 1)
@@ -313,10 +309,12 @@ changeBeats(numberOfBeats:=1)
     }
     else
     {
-        ; Inconsistency on the end of the bar
-        send, {insert}{right}
-        deleteBeats(numberOfBeats)
-        send, {left}
+        selected := selectBeats(numberOfBeats)
+        if (not selected)
+            return
+        deselect()
+        appendBeat()
+        deleteBeats(-min(numberOfBeats, selected))
     }
 }
 

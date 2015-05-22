@@ -1,4 +1,4 @@
-2015-05-16 Inconsistency on the end of the bar @changeBeats
+x 2015-05-16 Inconsistency on the end of the bar @changeBeats
 x 2015-05-19 Input repeat times greater than 9
 x 2015-05-17 Remove "the" from function names
 x 2015-05-17 Replace mode should exit automatically if pressed key is not 1 or 2 @replace-mode

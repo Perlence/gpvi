@@ -356,7 +356,7 @@ loop
     c::
         if (awaitsMotion = "c")
         {
-            changeBars(repeat)
+            clearBars(repeat)
             resetState({mode: "INSERT"})
         }
         else if (mode = "VISUAL")
