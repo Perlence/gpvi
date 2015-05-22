@@ -14,8 +14,12 @@ BAR_SELECTION_DELAY := 10
 ; Wait after each main loop iteration.
 LOOP_DELAY := 5
 
-; Base address
-CURSOR_BASE_ADDR := 0x00776e10
+; Base address of Guitar Pro version.
+GP_VERSION_BASE_ADDR := { "5.1": 0x0065FF95
+                        , "5.2": 0x006358F5 }
+; Base address of cursor information.
+CURSOR_BASE_ADDR := { "5.1": 0x0076F2A8
+                    , "5.2": 0x00776E10 }
 ; Current bar: UInt
 CURSOR_BAR_OFFSET := 0x27D4
 ; Beat number under cursor, bar-relative: UInt

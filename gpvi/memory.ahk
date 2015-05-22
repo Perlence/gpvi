@@ -8,19 +8,27 @@ _closeHandle(hProcess)
     dllCall("CloseHandle", UInt, hProcess)
 }
 
-_readProcessMemory(hProcess, baseAddress, type)
+_readProcessMemory(hProcess, baseAddress, type, size:="")
 {
     global TYPE_SIZES
-    size := TYPE_SIZES[type]
+    size := size ? size : TYPE_SIZES[type]
     varSetCapacity(buffer, size, 0)
-    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, type, &buffer, UInt, size, UPtr, 0)
-    data := numGet(buffer, , type)
+    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, UInt, &buffer, UInt, size, UPtr, 0)
+    if type in Str,AStr,WStr
+    {
+        data := strGet(&buffer, size, "")
+    }
+    else
+    {
+        data := numGet(buffer, , type)
+    }
     return data
 }
 
 getHProcess()
 {
-    global hProcess
+    global GP_VERSION_BASE_ADDR, WIN_TITLE
+    global hProcess, gpVersion
     if (hProcess)
         return hProcess
     winGet, pid, pid, %WIN_TITLE%
@@ -28,9 +36,42 @@ getHProcess()
     return hProcess
 }
 
-readOffset(baseAddress, offset, type)
+getGuitarProVersion(hProcess)
+{
+    global GP_VERSION_BASE_ADDR
+    global gpVersion
+    if (gpVersion)
+        return gpVersion
+    for version, baseAddr in GP_VERSION_BASE_ADDR
+    {
+        value := _readProcessMemory(hProcess, baseAddr, "Str", 3)
+        if (version = value)
+            return gpVersion := version
+    }
+}
+
+/**
+ * Read data located in [[baseAddress]+offset].
+ *
+ * @param {UInt or Object} baseAddress - if Object given, it should
+ *   contain base addresses corresponding to a particular Guitar Pro
+ *   version (see `CURSOR_BASE_ADDR`).
+ * @param {Int} offset
+ * @param {Str} type - name of AutoHotkey type.
+ * @return data read from given base address by given offset.
+ */
+readOffset(baseAddressIntOrObject, offset, type)
 {
     hProcess := getHProcess()
+    if (isObject(baseAddressIntOrObject))
+    {
+        gpVersion := getGuitarProVersion(hProcess)
+        baseAddress := baseAddressIntOrObject[gpVersion]
+    }
+    else
+    {
+        baseAddress := baseAddressIntOrObject
+    }
     startAddr := _readProcessMemory(hProcess, baseAddress, "UInt")
     return _readProcessMemory(hProcess, (startAddr + offset), type)
 }
@@ -81,7 +122,8 @@ isBarStart()
  */
 isBarEnd(returnBack:=true)
 {
-    ; FIXME: Creates empty bar in the end if testing on the last beat of the last bar
+    ; FIXME: Creates empty bar in the end if testing on the last beat of
+    ; the last bar.
     cursorX1 := getCursorPosition()[1]
     moveCursor("right")
     cursorX2 := getCursorPosition()[1]

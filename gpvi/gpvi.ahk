@@ -1,3 +1,4 @@
+#warn, all, msgBox
 #noEnv
 #singleInstance, force
 sendMode, input
@@ -10,7 +11,7 @@ detectHiddenWindows, on
 #include %A_ScriptDir%\memory.ahk
 #include %A_ScriptDir%\macros.ahk
 
-global mode, repeat, repeatSet, awaitsMotion, hProcess
+global mode, repeat, repeatSet, awaitsMotion, hProcess, gpVersion
 resetState()
 
 onExit("exitFunc")
