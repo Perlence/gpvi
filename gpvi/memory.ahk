@@ -1,11 +1,15 @@
 _openProcess(processId, desiredAccess:=0x10, inheritHandle:=false)
 {
-    return dllCall("OpenProcess", UInt, desiredAccess, Char, inheritHandle, UInt, processId)
+    return dllCall("OpenProcess"
+                  , UInt, desiredAccess
+                  , Char, inheritHandle
+                  , UInt, processId)
 }
 
 _closeHandle(hProcess)
 {
-    dllCall("CloseHandle", UInt, hProcess)
+    dllCall("CloseHandle"
+           , UInt, hProcess)
 }
 
 _readProcessMemory(hProcess, baseAddress, type, size:="")
@@ -13,7 +17,12 @@ _readProcessMemory(hProcess, baseAddress, type, size:="")
     global TYPE_SIZES
     size := size ? size : TYPE_SIZES[type]
     varSetCapacity(buffer, size, 0)
-    result := dllCall("ReadProcessMemory", UInt, hProcess, UPtr, baseAddress, UInt, &buffer, UInt, size, UPtr, 0)
+    result := dllCall("ReadProcessMemory"
+                     , UInt, hProcess
+                     , UPtr, baseAddress
+                     , UInt, &buffer
+                     , UInt, size
+                     , UPtr, 0)
     if type in Str,AStr,WStr
     {
         data := strGet(&buffer, size, "")
