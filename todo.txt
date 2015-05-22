@@ -28,8 +28,10 @@ x 2015-05-21 Rename V-LINE to V-BAR
 2015-05-21 Add '[ab]b' text object
 2015-05-21 Deselection doesn't work after yanking
 2015-05-21 Add max and min math functions
-2015-05-21 Fix pasting on the end of the bar
+x 2015-05-21 Fix pasting on the end of the bar
 2015-05-21 Put deleted beats in the clipboard
 x 2015-05-21 Switch to Visual mode when mouse selects
 2015-05-21 Visual insert mode
 2015-05-22 Fix extra empty bars in appendBar and isBarEnd functions
+2015-05-22 Keys 'gg' and 'G' don't extend selection in Visual mode and don't act as motions for 'd' and 'c'
+2015-05-22 Is it possible to implement 'fFtT' keys?

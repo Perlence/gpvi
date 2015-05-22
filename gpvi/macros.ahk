@@ -382,9 +382,10 @@ put(putMode:="overwrite", times:=1)
     {
         loop, % times - 1
         {
-            ; FIXME: Will mess up next bar if current bar misses one
-            ; beat and beats in clipboard make it complete.
-            send, {enter}{ctrl down}v{ctrl up}
+            appendBeat()
+            send, {ctrl down}v{ctrl up}
+            ; Delete rest to the right.
+            send, {right}{delete}{left}
         }
     }
     else

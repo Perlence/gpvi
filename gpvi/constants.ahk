@@ -24,10 +24,3 @@ CURSOR_X_OFFSET := 0x27D8
 CURSOR_Y_OFFSET := 0x27DC
 ; Selection mode: UChar
 IS_SELECTED_OFFSET := 0x27F8
-; dynamic of note under cursor: UChar
-;   ppp: 27
-;   pp:  28
-;   ...
-;   fff: 34
-NOTE_DYNAMIC_BASE := 0x05260924
-NOTE_DYNAMIC_OFFSET := 0x4c
