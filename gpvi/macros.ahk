@@ -412,13 +412,16 @@ insertBeatToBeginning()
 
 appendBeat()
 {
-    ; Could be better.
-    send, {enter}
+    if (isBarEnd(false))
+        send, {left}cr
+    else
+        send, {insert}r
 }
 
 appendBeatToEnd()
 {
-    send, {end}{enter}
+    send, {end}
+    appendBeat()
 }
 
 insertBar()
@@ -428,13 +431,9 @@ insertBar()
 
 appendBar()
 {
-    ; Uses clipboard -- not optimal.
+    ; FIXME: Creates 2 empty bars if called on the last bar
+    goToBeginningOfNextBar()
     insertBar()
-    send, {right}
-    deleteBeatsToEnd(1, true)
-    send, {left}
-    put()
-    send, {right}
 }
 
 transposeUp(times:=1)
