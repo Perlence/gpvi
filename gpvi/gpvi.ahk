@@ -47,16 +47,16 @@ loop
 
 #if WinActive(WIN_TITLE) and mode != "INSERT"
     ; Number keys
-    0::appendNumber(0)
-    1::appendNumber(1)
-    2::appendNumber(2)
-    3::appendNumber(3)
-    4::appendNumber(4)
-    5::appendNumber(5)
-    6::appendNumber(6)
-    7::appendNumber(7)
-    8::appendNumber(8)
-    9::appendNumber(9)
+    0::inputNumber(0)
+    1::inputNumber(1)
+    2::inputNumber(2)
+    3::inputNumber(3)
+    4::inputNumber(4)
+    5::inputNumber(5)
+    6::inputNumber(6)
+    7::inputNumber(7)
+    8::inputNumber(8)
+    9::inputNumber(9)
 
     ; Cursor keys
     h::
@@ -303,7 +303,7 @@ loop
 
     ; Replace, insert, and append
     r::
-        resetState({mode: "INSERT"})
+        resetState({awaitsMotion: "r"})
         return
     i::
         insertBeat()

@@ -4,11 +4,12 @@
 resetState(state:="")
 {
     state := state ? state : {}
-    global mode, repeat, awaitsMotion
+    global mode, repeat, awaitsMotion, replace
     mode := state.hasKey("mode") ? state["mode"] : "NORMAL"
     repeat := state.hasKey("repeat") ? state["repeat"] : 1
     repeatSet := state.hasKey("repeat") ? state["repeat"] : false
     awaitsMotion := state.hasKey("awaitsMotion") ? state["awaitsMotion"] : ""
+    replace := state.hasKey("replace") ? state["replace"] : ""
     updateTitle()
 }
 
@@ -18,7 +19,7 @@ resetState(state:="")
 setState(state:="")
 {
     state := state ? state : {}
-    global mode, repeat, awaitsMotion
+    global mode, repeat, awaitsMotion, replace
     if (state.hasKey("mode"))
     {
         mode := state["mode"]
@@ -30,18 +31,30 @@ setState(state:="")
         repeatSet := state["repeatSet"]
     if (state.hasKey("awaitsMotion"))
         awaitsMotion := state["awaitsMotion"]
+    if (state.hasKey("replace"))
+        replace := state["replace"]
 }
 
 /**
- * Append given digit to repeat number.
+ * Append given digit to repeat number or send number key if in replace
+ * mode.
  */
-appendNumber(number)
+inputNumber(number)
 {
-    global repeat, repeatSet
-    if (repeatSet)
-        setState({repeatSet: true, repeat: repeat * 10 + number})
-    else if (number > 0)
-        setState({repeatSet: true, repeat: number})
+    global awaitsMotion, repeat, repeatSet
+    if (awaitsMotion = "r")
+    {
+        send, %number%
+        if (number = 0 or number > 2)
+            resetState()
+    }
+    else
+    {
+        if (repeatSet)
+            setState({repeatSet: true, repeat: repeat * 10 + number})
+        else if (number > 0)
+            setState({repeatSet: true, repeat: number})
+    }
 }
 
 /**
