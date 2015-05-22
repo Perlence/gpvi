@@ -174,6 +174,7 @@ selectBeats(numberOfBeats:=1)
 
 selectBars(numberOfBars:=1)
 {
+    global BAR_SELECTION_DELAY
     direction := (numberOfBars > 0) ? "right" : "left"
     times := abs(numberOfBars)
     send, {ctrl down}{shift down}
@@ -281,13 +282,15 @@ deleteBeatsToBeginning(times:=1, cut:=false)
 
 deleteBars(numberOfBars:=1)
 {
+    global DIALOG_DELAY
     if (numberOfBars > 1)
     {
         selectBars(numberOfBars)
     }
     send, {ctrl down}x{ctrl up}
-    sleep, %DIALOG_DELAY%
-    send, {enter}
+    winWaitActive, Cut, , % DIALOG_DELAY / 1000
+    if (not errorLevel)
+        send, {enter}
 }
 
 clearBars(numberOfBars:=1)
@@ -320,22 +323,21 @@ changeBeats(numberOfBeats:=1)
 
 yank(times:=1)
 {
+    global DIALOG_DELAY
     send, {ctrl down}c{ctrl up}
-    sleep, %DIALOG_DELAY%
-    if (winActive("Copy")){
+    winWaitActive, Copy, , % DIALOG_DELAY / 1000
+    if errorLevel
+    {
+        deselect()
+    }
+    else
+    {
         if (times > 1)
         {
             times -= 1
             send, {tab}{up %times%}{enter}
         }
         send, {enter}
-        sleep, 1000
-        ; FIXME: Does not actually deselect
-        deselect()
-    }
-    else
-    {
-        deselect()
     }
 }
 
@@ -373,9 +375,19 @@ yankBars(times:=1)
 
 put(putMode:="overwrite", times:=1)
 {
+    global DIALOG_DELAY
     send, {ctrl down}v{ctrl up}
-    sleep, %DIALOG_DELAY%
-    if (winActive("Paste"))
+    winWaitActive, Paste, , % DIALOG_DELAY / 1000
+    if (errorLevel)
+    {
+        loop, % times - 1
+        {
+            ; FIXME: Will mess up next bar if current bar misses one beat and
+            ; beats in clipboard make it complete
+            send, {enter}{ctrl down}v{ctrl up}
+        }
+    }
+    else
     {
         send, {tab 2}
 
@@ -390,15 +402,6 @@ put(putMode:="overwrite", times:=1)
             send, {tab}{up %times%}
         }
         send, {enter}
-    }
-    else
-    {
-        loop, % times - 1
-        {
-            ; FIXME: Will mess up next bar if current bar misses one beat and
-            ; beats in clipboard make it complete
-            send, {enter}{ctrl down}v{ctrl up}
-        }
     }
 }
 
