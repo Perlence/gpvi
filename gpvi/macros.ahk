@@ -1,15 +1,58 @@
-moveCursor(direction, times:=1)
+/**
+ * Move cursor to given direction number of times limiting movement to current
+ * bar if necessary.
+ *
+ * @param {Str} direction - a key to send, e.g. "left" or "up".
+ * @param {UInt} times - movement distance.
+ * @param {Bool} limitToBar - limit movement to current bar.
+ */
+moveCursor(direction, times:=1, limitToBar:=false)
 {
     global mode
+
     if (mode = "VISUAL")
         send, {shift down}
     else if (mode = "V-BAR")
         send, {ctrl down}{shift down}
-    send, {%direction% %times%}
+
+    moved := 0
+    if (not limitToBar or direction = "up" or direction = "down")
+    {
+        send, {%direction% %times%}
+        moved := times
+    }
+    else
+    {
+        cursorCur := getCursorPosition()[1]
+        if (direction = "left" and cursorCur > 1)
+        {
+            times := min(cursorCur, times)
+            send, {left %times%}
+            moved := times
+        }
+        else if (direction = "right")
+        {
+            loop, %times%
+            {
+                send, {right}
+                cursorPrev := cursorCur
+                cursorCur := getCursorPosition()[1]
+                if (cursorCur != cursorPrev + 1)
+                {
+                    send, {left}
+                    break
+                }
+                moved += 1
+            }
+        }
+    }
+
     if (mode = "VISUAL")
         send, {shift up}
     else if (mode = "V-BAR")
         send, {ctrl up}{shift up}
+
+    return moved
 }
 
 goToEnd(times:=1)
@@ -65,11 +108,17 @@ goToBeginningOfNextBar(times:=1)
 
 goToBeatOfBar(number:=1)
 {
-    goToBeginning()
-    if (number > 1)
+    cursor := getCursorPosition()[1]
+    if (number = cursor)
+        return
+    if (number = 1)
     {
-        moveCursor("right", (number - 1))
+        send, {home}
+        return
     }
+    distance := number - cursor
+    direction := getDirection(distance)
+    moveCursor(direction, abs(distance), true)
 }
 
 goToAbsoluteBeat(number:=1)
@@ -134,48 +183,29 @@ listMarkers()
 /**
  * Select given number of beats limited to current bar.
  *
- * @param {int} numberOfBeats - number of beats to select. If number is
+ * @param {Int} numberOfBeats - number of beats to select. If number is
  *   positive then select beats to the right, else select beats to the
  *   left.
- * @return {int} number of selected beats.
+ * @return {Int} number of selected beats.
  */
 selectBeats(numberOfBeats:=1)
 {
-    cursorCur := getCursorPosition()[1]
+    direction := getDirection(numberOfBeats)
     if (numberOfBeats < 0)
     {
-        if (cursorCur = 1)
+        if (not moveCursor("left", 1, true))
             return 0
-        times := min(cursorCur - 1, abs(numberOfBeats)) - 1
-        send, {left}{shift down}{up}{down}{left %times%}{shift up}
-        return times + 1
     }
-    else
-    {
-        times := abs(numberOfBeats) - 1
-        send, {shift down}{up}{down}
-        selected := 1
-        loop, %times%
-        {
-            send, {right}
-            cursorPrev := cursorCur
-            cursorCur := getCursorPosition()[1]
-            if (cursorCur != cursorPrev + 1)
-            {
-                send, {left}
-                break
-            }
-            selected += 1
-        }
-        send, {shift up}
-        return selected
-    }
+    send, {shift down}{up}{down}
+    moved := moveCursor(direction, abs(numberOfBeats) - 1, true) + 1
+    send, {shift up}
+    return moved
 }
 
 selectBars(numberOfBars:=1)
 {
     global BAR_SELECTION_DELAY
-    direction := (numberOfBars > 0) ? "right" : "left"
+    direction := getDirection(numberOfBars)
     times := abs(numberOfBars)
     send, {ctrl down}{shift down}
     loop, %times%
@@ -303,6 +333,9 @@ clearBars(numberOfBars:=1)
 
 /**
  * Replace beats to the right with a rest.
+ *
+ * @param {UInt} numberOfBeats - number of beats to change.
+ * @return {UInt} how much beats have been changed.
  */
 changeBeats(numberOfBeats:=1)
 {
@@ -312,12 +345,12 @@ changeBeats(numberOfBeats:=1)
     }
     else
     {
-        selected := selectBeats(numberOfBeats)
-        if (not selected)
-            return
-        deselect()
+        moved := moveCursor("right", (numberOfBeats - 1), true)
+        if (not moved)
+            return 0
         appendBeat()
-        deleteBeats(-min(numberOfBeats, selected))
+        deleteBeats(-min(numberOfBeats, moved + 1))
+        return moved
     }
 }
 

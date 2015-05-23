@@ -107,7 +107,8 @@ getSelectionMode()
  */
 getCursorPosition()
 {
-    global CURSOR_BASE_ADDR, CURSOR_X_OFFSET, CURSOR_Y_OFFSET
+    global CURSOR_BASE_ADDR, CURSOR_X_OFFSET, CURSOR_Y_OFFSET, CURSOR_DELAY
+    sleep, %CURSOR_DELAY%
     cursorX := readOffset(CURSOR_BASE_ADDR, CURSOR_X_OFFSET, "UInt")
     cursorY := readOffset(CURSOR_BASE_ADDR, CURSOR_Y_OFFSET, "UInt")
     return [cursorX, cursorY]
@@ -125,7 +126,7 @@ isBarStart()
 /**
  * Check if cursor is on the last beat of the current bar
  *
- * @param {bool} returnBack - the function moves cursor to the left to
+ * @param {Bool} returnBack - the function moves cursor to the left to
  *   check if cursor position became 1, then it moves cursor back. Set
  *   this argument to `false` to not go left.
  */

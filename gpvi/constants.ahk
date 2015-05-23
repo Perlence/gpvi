@@ -13,6 +13,8 @@ DIALOG_DELAY := 50
 BAR_SELECTION_DELAY := 10
 ; Wait after each main loop iteration.
 LOOP_DELAY := 5
+; Wait before querying cursor position.
+CURSOR_DELAY := 10
 
 ; Base address of Guitar Pro version.
 GP_VERSION_BASE_ADDR := { "5.1": 0x0065FF95
