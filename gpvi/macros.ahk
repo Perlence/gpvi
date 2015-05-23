@@ -106,6 +106,23 @@ goToBeginningOfNextBar(times:=1)
         send, {shift up}
 }
 
+goToBeginningOfPrevBar(times:=1)
+{
+    global mode
+    if (mode = "VISUAL")
+        send, {shift down}
+    else if (mode = "V-BAR")
+        send, {shift down}
+    loop, %times%
+    {
+        send, {home}{left}{home}
+    }
+    if (mode = "VISUAL")
+        send, {shift up}
+    else if (mode = "V-BAR")
+        send, {shift up}
+}
+
 goToBeatOfBar(number:=1)
 {
     cursor := getCursorPosition()[1]
@@ -137,14 +154,32 @@ goToBeginningOfScore()
 
 goToEndOfScore()
 {
-    send, {ctrl down}{end}{ctrl up}
-    goToBeginning()
+    send, {ctrl down}{end}{ctrl up}{home}
 }
 
 goToBar(number:=1)
 {
-    goToBeginningOfScore()
-    goToBeginningOfNextBar(number - 1)
+    if (number = 1)
+    {
+        goToBeginningOfScore()
+        return
+    }
+    currentBar := getCurrentBar()
+    if (number = currentBar)
+        return
+    distance := number - currentBar
+    if (abs(distance) < number - 1)
+    {
+        if (distance > 0)
+            goToBeginningOfNextBar(abs(distance))
+        else
+            goToBeginningOfPrevBar(abs(distance))
+    }
+    else
+    {
+        goToBeginningOfScore()
+        goToBeginningOfNextBar(number - 1)
+    }
 }
 
 goToNextMarker(number:=1)

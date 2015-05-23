@@ -38,4 +38,4 @@ x 2015-05-21 Switch to Visual mode when mouse selects
 x 2015-05-23 Add build target to Makefile
 x 2015-05-23 Move some code blocks from selectBeats to moveCursor
 2015-05-23 Change keys sometimes exit from Insert mode
-2015-05-23 Go to bar 'gg' and 'G' keys should calculate direction using cursor
+x 2015-05-23 Go to bar 'gg' and 'G' keys should calculate direction using cursor

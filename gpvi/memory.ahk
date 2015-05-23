@@ -115,6 +115,18 @@ getCursorPosition()
 }
 
 /**
+ * Use memory magic to determine current bar number.
+ *
+ * @return {UInt} current bar.
+ */
+getCurrentBar()
+{
+    global CURSOR_BASE_ADDR, CURSOR_BAR_OFFSET, CURSOR_DELAY
+    sleep, %CURSOR_DELAY%
+    return readOffset(CURSOR_BASE_ADDR, CURSOR_BAR_OFFSET, "UInt")
+}
+
+/**
  * Check if cursor is on the first beat of the current bar
  */
 isBarStart()
