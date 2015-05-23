@@ -9,3 +9,6 @@ indent_size = 4
 
 [Makefile]
 indent_style = tab
+
+[.vimrc]
+end_of_line = lf
