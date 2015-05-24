@@ -307,6 +307,11 @@ loop
     r::
         resetState({awaitsMotion: "r"})
         return
+    +r::
+        if (mode = "VISUAL")
+            clearBars(repeat)
+        resetState({mode: "INSERT"})
+        return
     i::
         insertBeat()
         resetState({mode: "INSERT"})
@@ -380,8 +385,7 @@ loop
         keyWait, shift
         if (mode = "VISUAL")
         {
-            deleteBars()
-            insertBar()
+            clearBars(repeat)
             resetState({mode: "INSERT"})
         }
         else

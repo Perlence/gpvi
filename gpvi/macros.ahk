@@ -277,6 +277,29 @@ selectToMouse()
     send {shift down}{lbutton}{shift up}
 }
 
+delete(bars:=1, cut:=true)
+{
+    global DIALOG_DELAY
+    if (not cut)
+        send, {delete}
+    else
+    {
+        send, {ctrl down}x{ctrl up}
+        winWaitActive, Cut, , % DIALOG_DELAY / 1000
+        if errorLevel
+            deselect()
+        else
+        {
+            if (bars > 1)
+            {
+                bars -= 1
+                send, {tab}{up %bars%}{enter}
+            }
+            send, {enter}
+        }
+    }
+}
+
 deleteNotes(numberOfNotes:=1)
 {
     loop, % abs(numberOfNotes)
@@ -295,75 +318,51 @@ deleteNotes(numberOfNotes:=1)
 /**
  * Delete beats in current bar.
  */
-deleteBeats(times:=1, cut:=false)
+deleteBeats(times:=1)
 {
     global mode
-    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
-    if (abs(times) = 1)
-    {
-        if (times < 0)
-        {
-            cursor := getCursorPosition()[1]
-            if (cursor = 1)
-                return
-            send, {left}
-        }
-        if (mode = "NORMAL")
-        {
-            send, {shift down}{up}{down}{shift up}
-        }
-        send, %delete%
-    }
-    else
-    {
-        if (selectBeats(times))
-            send, %delete%
-    }
+    if (mode = "NORMAL")
+        selectBeats(times)
+    delete()
 }
 
-deleteBeatsToEnd(times:=1, cut:=false)
+deleteBeatsToEnd(times:=1)
 {
-    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToEnd(times)
-    send, %delete%
-    if (times > 1)
-    {
-        times -= 1
-        send, {left %times%}
-    }
+    delete(1, times = 1)
+    times -= 1
+    send, {left %times%}
 }
 
-deleteBeatsToBeginning(times:=1, cut:=false)
+deleteBeatsToBeginning(times:=1)
 {
-    delete := not cut ? "{delete}" : "{ctrl down}x{ctrl up}"
     selectBeatsToBeginning(times)
-    send, %delete%
-    if (times > 1)
-    {
-        times -= 1
-        send, {left %times%}
-    }
+    delete(1, times = 1)
+    times -= 1
+    send, {left %times%}
 }
 
 deleteBars(numberOfBars:=1)
 {
-    global DIALOG_DELAY
-    if (numberOfBars > 1)
-    {
-        selectBars(numberOfBars)
-    }
-    send, {ctrl down}x{ctrl up}
-    winWaitActive, Cut, , % DIALOG_DELAY / 1000
-    if (not errorLevel)
-        send, {enter}
+    delete(numberOfBars)
 }
 
 clearBars(numberOfBars:=1)
 {
-    selectBars(numberOfBars)
-    send, {delete}
-    times := numberOfBars - 1
-    send, {left %times%}
+    if (numberOfBars = 1)
+    {
+        send, {home}
+        selectBeatsToEnd()
+        delete()
+    }
+    else
+    {
+        yank(numberOfBars)
+        selectBars(numberOfBars)
+        send, {delete}
+        times := numberOfBars - 1
+        send, {left %times%}
+    }
 }
 
 /**
@@ -389,7 +388,7 @@ changeBeats(numberOfBeats:=1)
     }
 }
 
-yank(times:=1)
+yank(bars:=1)
 {
     global DIALOG_DELAY
     send, {ctrl down}c{ctrl up}
@@ -400,10 +399,10 @@ yank(times:=1)
     }
     else
     {
-        if (times > 1)
+        if (bars > 1)
         {
-            times -= 1
-            send, {tab}{up %times%}{enter}
+            bars -= 1
+            send, {tab}{up %bars%}{enter}
         }
         send, {enter}
     }
