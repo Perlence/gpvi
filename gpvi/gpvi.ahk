@@ -11,20 +11,22 @@ detectHiddenWindows, on
 #include %A_ScriptDir%\memory.ahk
 #include %A_ScriptDir%\macros.ahk
 
-global mode, repeat, repeatSet, awaitsMotion, hProcess, gpVersion
+global mode, repeat, repeatSet, awaitsMotion
 resetState()
 
-onExit("exitFunc")
-exitFunc(exitReason, exitCode)
-{
-    global hProcess
-    _closeHandle(hProcess)
-}
+setTimer, monitorGuitarPro, %LOOP_DELAY%
 
-loop
+monitorGuitarPro()
 {
+    global WIN_TITLE
     global mode
-    winWaitActive, %WIN_TITLE%
+    if (not winActive(WIN_TITLE))
+    {
+        resetState()
+        return
+    }
+
+    ; Update mode if selection exists.
     selectionMode := getSelectionMode()
     if (selectionMode = "beats")
         setState({mode: "VISUAL"})
@@ -32,8 +34,9 @@ loop
         setState({mode: "V-BAR"})
     else if (mode = "VISUAL" or mode = "V-BAR")
         setState({mode: "NORMAL"})
+
+    ; Update window title
     updateTitle()
-    sleep, %LOOP_DELAY%
 }
 
 #if WinActive(WIN_TITLE)

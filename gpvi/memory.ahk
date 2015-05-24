@@ -36,10 +36,7 @@ _readProcessMemory(hProcess, baseAddress, type, size:="")
 
 getHProcess()
 {
-    global GP_VERSION_BASE_ADDR, WIN_TITLE
-    global hProcess, gpVersion
-    if (hProcess)
-        return hProcess
+    global WIN_TITLE
     winGet, pid, pid, %WIN_TITLE%
     hProcess := _openProcess(pid)
     return hProcess
@@ -48,9 +45,6 @@ getHProcess()
 getGuitarProVersion(hProcess)
 {
     global GP_VERSION_BASE_ADDR
-    global gpVersion
-    if (gpVersion)
-        return gpVersion
     for version, baseAddr in GP_VERSION_BASE_ADDR
     {
         value := _readProcessMemory(hProcess, baseAddr, "Str", 3)
@@ -82,7 +76,9 @@ readOffset(baseAddressIntOrObject, offset, type)
         baseAddress := baseAddressIntOrObject
     }
     startAddr := _readProcessMemory(hProcess, baseAddress, "UInt")
-    return _readProcessMemory(hProcess, (startAddr + offset), type)
+    result := _readProcessMemory(hProcess, (startAddr + offset), type)
+    _closeHandle(hProcess)
+    return result
 }
 
 /**
