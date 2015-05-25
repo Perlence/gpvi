@@ -15,7 +15,6 @@ global mode, repeat, repeatSet, awaitsMotion, hProcess, gpVersion
 resetState()
 
 onExit("exitFunc")
-
 exitFunc(exitReason, exitCode)
 {
     global hProcess
@@ -39,9 +38,6 @@ loop
 
 #if WinActive(WIN_TITLE)
     escape::
-        send, {escape}
-        resetState()
-        return
     ^c::
         send, {escape}
         resetState()
