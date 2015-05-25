@@ -12,8 +12,8 @@ x 2015-05-19 Add 'gg' and 'G' keys
 x 2015-05-19 Bug: command '1G' goes to the end of the song
 x 2015-05-19 Add default argument 1 to most functions
 x 2015-05-19 Add marker navigation with '[[' and ']]' keys
-2015-05-20 Go to beat of bar doesn't respect bar length, i.e. it will move cursor further
-2015-05-20 Join bars with 'J'
+x 2015-05-20 Go to beat of bar doesn't respect bar length, i.e. it will move cursor further
+x 2015-05-20 Join bars with 'J'
 2015-05-20 Copy and paste keys: y, yy, Y, p, P, gp, gP
 2015-05-20 Add 'ZZ' and 'ZQ' keys
 2015-05-20 Delete bars on 'R' in Visual mode
@@ -26,7 +26,7 @@ x 2015-05-20 Display current mode
 x 2015-05-21 State per window
 x 2015-05-21 Rename V-LINE to V-BAR
 2015-05-21 Add '[ab]b' text object
-2015-05-21 Deselection doesn't work after yanking
+x 2015-05-21 Deselection doesn't work after yanking
 x 2015-05-21 Add max and min math functions
 x 2015-05-21 Fix pasting on the end of the bar
 x 2015-05-21 Put deleted beats in the clipboard
@@ -39,3 +39,6 @@ x 2015-05-23 Add build target to Makefile
 x 2015-05-23 Move some code blocks from selectBeats to moveCursor
 2015-05-23 Change keys sometimes exit from Insert mode
 x 2015-05-23 Go to bar 'gg' and 'G' keys should calculate direction using cursor
+2015-05-25 Repeat key and macro recording
+2015-05-26 Key 'w' doesn't move to next bar if current bar is incomplete
+2015-05-26 Stop joining bars if the repeat number is greater then number of bars to the right

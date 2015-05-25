@@ -417,6 +417,12 @@ monitorGuitarPro()
         resetState({mode: "INSERT"})
         return
 
+    +j::
+        keyWait, shift
+        joinBars(repeat)
+        resetState()
+        return
+
     ; Visual mode
     v::
         if (mode = "VISUAL")

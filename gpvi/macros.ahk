@@ -563,3 +563,18 @@ deselect()
 {
     send, {escape}
 }
+
+joinBars(times:=1)
+{
+    goToBeginningOfNextBar(times)
+    loop, %times%
+    {
+        selectBeatsToEnd()
+        delete()
+        send, {home}{left}c
+        put("insert")
+        send, {right}{ctrl down}{delete}{ctrl up}
+        if (times > 1)
+            goToBeginning()
+    }
+}
