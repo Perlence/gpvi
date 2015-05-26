@@ -58,68 +58,52 @@ moveCursor(direction, times:=1, limitToBar:=false)
 goToEnd(times:=1)
 {
     global mode
-    if (mode = "VISUAL")
-        send, {shift down}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
         send, {right}{end}
     }
-    if (mode = "VISUAL")
-        send, {shift up}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift up}
 }
 
 goToBeginning(times:=1)
 {
     global mode
-    if (mode = "VISUAL")
-        send, {shift down}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
         send, {left}{home}
     }
-    if (mode = "VISUAL")
-        send, {shift up}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift up}
 }
 
 goToBeginningOfNextBar(times:=1)
 {
     global mode
-    if (mode = "VISUAL")
-        send, {shift down}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
-        send, {end}{right}
+        send, {ctrl down}{right}{ctrl up}
     }
-    if (mode = "VISUAL")
-        send, {shift up}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift up}
 }
 
 goToBeginningOfPrevBar(times:=1)
 {
     global mode
-    if (mode = "VISUAL")
-        send, {shift down}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift down}
     loop, %times%
     {
         send, {home}{left}{home}
     }
-    if (mode = "VISUAL")
-        send, {shift up}
-    else if (mode = "V-BAR")
+    if (mode = "VISUAL" or mode = "V-BAR")
         send, {shift up}
 }
 
