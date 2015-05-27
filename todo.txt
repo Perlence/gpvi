@@ -43,3 +43,5 @@ x 2015-05-23 Go to bar 'gg' and 'G' keys should calculate direction using cursor
 2015-05-25 Repeat key and macro recording
 2015-05-26 Key 'w' doesn't move to next bar if current bar is incomplete
 2015-05-26 Stop joining bars if the repeat number is greater then number of bars to the right
+2015-05-27 Clear bars with keys 'c', 'C', 's', 'S' in Visual mode
+2015-05-27 Cannot switch to Visual mode by pressing 'v' in V-BAR mode, and vice versa

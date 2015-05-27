@@ -319,7 +319,7 @@ monitorGuitarPro()
         return
     +r::
         if (mode = "VISUAL")
-            clearBars(repeat)
+            deleteBars()
         resetState({mode: "INSERT"})
         return
     i::
@@ -400,7 +400,7 @@ monitorGuitarPro()
         keyWait, shift
         if (mode = "VISUAL")
         {
-            clearBars(repeat)
+            deleteBars()
             resetState({mode: "INSERT"})
         }
         else
@@ -418,7 +418,6 @@ monitorGuitarPro()
         else if (mode = "V-BAR")
         {
             deleteBars()
-            insertBar()
             resetState({mode: "INSERT"})
         }
         else
