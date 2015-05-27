@@ -82,8 +82,8 @@ Legend:
 | <kbd>↑</kbd> | same as <kbd>k</kbd> |
 | <kbd>↓</kbd> | same as <kbd>j</kbd> |
 | <kbd>→</kbd> | same as <kbd>l</kbd> |
-| <kbd>Left Mouse</kbd> | move cursor to the mouse click position |
-| <kbd>Middle Mouse</kbd> | same as <kbd>g</kbd><kbd>P</kbd> at the mouse click position |
+| <kbd>LeftMouse</kbd> | move cursor to the mouse click position |
+| <kbd>MiddleMouse</kbd> | same as <kbd>g</kbd><kbd>P</kbd> at the mouse click position |
 
 
 ## Visual mode
