@@ -60,6 +60,8 @@ monitorGuitarPro()
     9::inputNumber(9)
 
     ; Cursor keys
+    left::
+    backspace::
     h::
         if (awaitsMotion = "d")
         {
@@ -79,14 +81,19 @@ monitorGuitarPro()
         }
         transitState()
         return
+    down::
+    enter::
     j::
         moveCursor("down", repeat)
         transitState()
         return
+    up::
     k::
         moveCursor("up", repeat)
         transitState()
         return
+    right::
+    space::
     l::
         if (awaitsMotion = "d")
         {
