@@ -141,7 +141,11 @@ monitorGuitarPro()
         transitState()
         return
     w::
-        if awaitsMotion in d,c
+        if (awaitsMotion = ":")
+        {
+            save()
+        }
+        else if awaitsMotion in d,c
         {
             ; selectBeatsToBeginningOfNextBar(repeat)
             deleteBeatsToEnd(repeat)
@@ -330,6 +334,11 @@ monitorGuitarPro()
         resetState({mode: "INSERT"})
         return
     o::
+        if (awaitsMotion = ":")
+        {
+            open()
+            resetState()
+        }
         if (awaitsMotion = "g")
         {
             goToAbsoluteBeat(repeat)
@@ -495,6 +504,48 @@ monitorGuitarPro()
         else
         {
             put("insert", repeat)
+        }
+        resetState()
+        return
+
+    ; Command-line prompt
+    :::
+        keyWait, shift
+        setState({awaitsMotion: ":"})
+        return
+
+    ; New file (in command-line mode)
+    n::
+        if (awaitsMotion = ":")
+        {
+            new()
+        }
+        resetState()
+        return
+
+    ; Quit
+    q::
+        if (awaitsMotion = ":")
+        {
+            quit()
+        }
+        resetState()
+        return
+    +z::
+        if (awaitsMotion = "Z")
+        {
+            quit(true)
+            resetState()
+        }
+        else
+        {
+            setState({awaitsMotion: "Z"})
+        }
+        return
+    +q::
+        if (awaitsMotion = "Z")
+        {
+            quit(false)
         }
         resetState()
         return

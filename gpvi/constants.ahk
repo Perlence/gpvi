@@ -6,6 +6,9 @@ TYPE_SIZES := { "UChar": 1, "Char": 1
 
 ; Guitar Pro 5 window title.
 WIN_TITLE := "Guitar Pro 5 ahk_class TMainForm"
+SAVE_AS_WIN_TITLE := "Save As ahk_class #32770"
+CONFIRMATION_WIN_TITLE := "Confirmation ahk_class TFMyMsg"
+WARNING_WIN_TITLE := "Warning ahk_class TFMyMsg"
 
 ; Wait for dialog to show up.
 DIALOG_DELAY := 50

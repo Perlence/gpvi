@@ -14,8 +14,9 @@ x 2015-05-19 Add default argument 1 to most functions
 x 2015-05-19 Add marker navigation with '[[' and ']]' keys
 x 2015-05-20 Go to beat of bar doesn't respect bar length, i.e. it will move cursor further
 x 2015-05-20 Join bars with 'J'
-2015-05-20 Copy and paste keys: y, yy, Y, p, P, gp, gP
-2015-05-20 Add 'ZZ' and 'ZQ' keys
+x 2015-05-20 Copy and paste keys: y, yy, Y, P, gP
+2015-05-20 Paste keys: p, gp
+x 2015-05-20 Add 'ZZ' and 'ZQ' keys
 2015-05-20 Delete bars on 'R' in Visual mode
 2015-05-20 Change dynamics with 'gu' and 'gU' keys
 x 2015-05-20 Mouse: right click to select to mouse cursor
@@ -25,7 +26,7 @@ x 2015-05-20 Mouse: middle click to execute 'gP'
 x 2015-05-20 Display current mode
 x 2015-05-21 State per window
 x 2015-05-21 Rename V-LINE to V-BAR
-2015-05-21 Add '[ab]b' text object
+x 2015-05-21 REJECTED Add '[ab]b' text object
 x 2015-05-21 Deselection doesn't work after yanking
 x 2015-05-21 Add max and min math functions
 x 2015-05-21 Fix pasting on the end of the bar

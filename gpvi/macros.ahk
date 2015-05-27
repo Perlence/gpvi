@@ -271,16 +271,16 @@ delete(bars:=1, cut:=true)
         send, {ctrl down}x{ctrl up}
         winWaitActive, Cut, , % DIALOG_DELAY / 1000
         if errorLevel
-            deselect()
-        else
         {
-            if (bars > 1)
-            {
-                bars -= 1
-                send, {tab}{up %bars%}{enter}
-            }
-            send, {enter}
+            deselect()
+            return
         }
+        if (bars > 1)
+        {
+            bars -= 1
+            send, {tab}{up %bars%}{enter}
+        }
+        send, {enter}
     }
 }
 
@@ -380,16 +380,14 @@ yank(bars:=1)
     if errorLevel
     {
         deselect()
+        return
     }
-    else
+    if (bars > 1)
     {
-        if (bars > 1)
-        {
-            bars -= 1
-            send, {tab}{up %bars%}{enter}
-        }
-        send, {enter}
+        bars -= 1
+        send, {tab}{up %bars%}{enter}
     }
+    send, {enter}
 }
 
 /**
@@ -438,23 +436,21 @@ put(putMode:="overwrite", times:=1)
             ; Delete rest to the right.
             send, {right}{delete}{left}
         }
+        return
     }
-    else
+    send, {tab 2}
+
+    if (putMode = "insert")
+        send, {down}
+    else if (putMode = "append")
+        send, {down 2}
+
+    if (times > 1)
     {
-        send, {tab 2}
-
-        if (putMode = "insert")
-            send, {down}
-        else if (putMode = "append")
-            send, {down 2}
-
-        if (times > 1)
-        {
-            times -= 1
-            send, {tab}{up %times%}
-        }
-        send, {enter}
+        times -= 1
+        send, {tab}{up %times%}
     }
+    send, {enter}
 }
 
 putLeft(putMode:="overwrite", times:=1)
@@ -560,5 +556,50 @@ joinBars(times:=1)
         send, {right}{ctrl down}{delete}{ctrl up}
         if (times > 1)
             goToBeginning()
+    }
+}
+
+new()
+{
+    send, {ctrl down}n{ctrl up}
+}
+
+open()
+{
+    send, {ctrl down}o{ctrl up}
+}
+
+save()
+{
+    send, {ctrl down}s{ctrl up}
+}
+
+saveAs()
+{
+    send, {ctrl down}{shift down}s{ctrl up}{shift up}
+}
+
+quit(save:="")
+{
+    global SAVE_AS_WIN_TITLE, CONFIRMATION_WIN_TITLE, WARNING_WIN_TITLE
+    global DIALOG_DELAY
+    if (save = true)
+    {
+        save()
+        winWaitActive, %SAVE_AS_WIN_TITLE%, , % DIALOG_DELAY / 100
+        winWaitNotActive, %SAVE_AS_WIN_TITLE%
+        winWaitActive, %WARNING_WIN_TITLE%, , % DIALOG_DELAY / 1000
+        winWaitNotActive, %WARNING_WIN_TITLE%
+    }
+
+    send, {alt down}{F4}{alt up}
+    if (save = false)
+    {
+        winWaitActive, %CONFIRMATION_WIN_TITLE%, , % DIALOG_DELAY / 1000
+        if (errorLevel)
+            return
+        if (save = false)
+            send, {right}
+        send, {enter}
     }
 }
